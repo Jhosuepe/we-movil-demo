@@ -684,6 +684,8 @@
           if (destination) points.push(L.latLng(destination.lat, destination.lng));
           map.fitBounds(L.latLngBounds(points).pad(0.22), { maxZoom: 13, animate: false });
           locationCentered = true;
+        } else if (!map.getBounds().pad(-0.15).contains([currentLocation.lat, currentLocation.lng])) {
+          map.panTo([currentLocation.lat, currentLocation.lng], { animate: true, duration: 0.25 });
         }
       }
 
@@ -901,6 +903,7 @@
 
       function navigate(page) {
         if (!pageNames[page]) return;
+        if (page !== "rutas" && locationWatchId !== null) stopLocationTracking();
         document.querySelectorAll(".page").forEach(function (el) { el.classList.remove("active"); });
         document.getElementById("page-" + page).classList.add("active");
         document.querySelectorAll(".nav-button").forEach(function (el) { el.classList.toggle("active", el.dataset.page === page); });
