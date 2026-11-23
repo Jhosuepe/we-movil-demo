@@ -122,6 +122,7 @@
     .map-point-icon.vehicle { background: #e58b39; }
     .map-point-icon.start { background: #1c745b; }
     .map-point-icon.end { background: #d54e43; }
+    .live-location-dot { width: 20px; height: 20px; border: 3px solid white; border-radius: 50%; background: #356fda; box-shadow: 0 0 0 7px #356fda35, 0 1px 6px #102c2780; }
     .leaflet-popup-content-wrapper { border-radius: 11px !important; }
     .map-popup-title { font-weight: 750; color: var(--ink); margin-bottom: 4px; }
     .map-popup-note { color: var(--muted); font-size: 11px; line-height: 1.4; }
@@ -136,6 +137,8 @@
     .alert-item p { color: var(--muted); font-size: 10px; margin: 4px 0 0; line-height: 1.45; }
     .alert-time { display: block; font-size: 9px; color: #9aa8a2; margin-top: 5px; }
     .route-form { display: grid; grid-template-columns: 1fr 1fr 120px auto; gap: 11px; align-items: end; }
+    .location-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+    .location-status { color: var(--muted); font-size: 10px; line-height: 1.5; }
     .distance-field { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 9px; background: #fff; padding-right: 11px; }
     .distance-field input { border: 0; box-shadow: none !important; }
     .distance-field span { color: var(--muted); font-size: 11px; }
@@ -292,22 +295,22 @@
           <div class="welcome"><div><div class="eyebrow">Guía rápida</div><h2>Tu primer viaje, paso a paso.</h2><p>En pocos minutos puedes explorar las funciones principales de We Móvil.</p></div><span class="badge">6 pasos · 2 minutos</span></div>
           <p class="guide-intro">La idea es sencilla: indica hacia dónde vas, compara opciones sostenibles, completa un viaje y revisa cómo tus decisiones suman a tus metas. Puedes volver a esta guía cuando quieras.</p>
           <div class="grid guide-grid">
-            <article class="guide-step"><div class="guide-step-head"><span class="step-number">01</span><h3>Elige origen y destino</h3></div><p>Abre <strong>Planificar ruta</strong> y selecciona dos lugares de prueba de Santiago. La distancia aproximada se calcula automáticamente; no necesitas activar el GPS.</p><button class="text-link" data-goto="rutas">Ir al planificador →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">01</span><h3>Elige origen y destino</h3></div><p>Abre <strong>Planificar ruta</strong>, selecciona puntos de Santiago o pulsa <strong>Usar mi ubicación actual</strong> y acepta el permiso del navegador. La ubicación se actualiza mientras el seguimiento está activo.</p><button class="text-link" data-goto="rutas">Ir al planificador →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">02</span><h3>Compara las alternativas</h3></div><p>Pulsa <strong>Buscar rutas</strong>. Revisa duración, costo estimado y CO₂ evitado. “Más sostenible”, “Más rápida” y “Más económica” son opciones simuladas para que puedas explorar la experiencia.</p><button class="text-link" data-goto="rutas">Ver rutas →</button></article>
-            <article class="guide-step"><div class="guide-step-head"><span class="step-number">03</span><h3>Elige y registra el viaje</h3></div><p>Pulsa <strong>Elegir</strong> en una ruta. Para esta demostración, selecciona “GPS coincide con el proveedor” y confirma para registrar un viaje válido; elige “Inconsistencia” para probar la validación antifraude.</p><button class="text-link" data-goto="rutas">Probar un viaje →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">03</span><h3>Elige y registra el viaje</h3></div><p>Pulsa <strong>Elegir</strong> y luego <strong>Registrar viaje</strong>. La validación es solo una simulación: no comprueba que hayas viajado ni usa tu ubicación actual.</p><button class="text-link" data-goto="rutas">Probar un viaje →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">04</span><h3>Revisa tu impacto</h3></div><p>Un viaje validado actualiza automáticamente el historial, los puntos y el CO₂ estimado que evitaste frente a recorrer la misma distancia en auto. Los viajes no validados quedan registrados, pero no suman beneficios.</p><button class="text-link" data-goto="impacto">Ver mi impacto →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">05</span><h3>Alcanza tus metas y canjea</h3></div><p>Completa viajes validados en <strong>5 días de la semana</strong> para habilitar el beneficio del abono mensual, o en <strong>20 días del mes</strong> para el cupón de tiendas deportivas. El canje se habilita al cumplir cada meta.</p><button class="text-link" data-goto="recompensas">Abrir billetera →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">+</span><h3>Consulta alertas y tu historial</h3></div><p>En <strong>Alertas</strong> puedes revisar avisos de ejemplo, crear incidentes y ajustar preferencias. En <strong>Historial</strong> verás tus recorridos y podrás exportarlos a CSV.</p><button class="text-link" data-goto="alertas">Explorar alertas →</button></article>
           </div>
-          <div class="guide-callout"><span aria-hidden="true">ⓘ</span><div><strong>Importante sobre esta demostración</strong>La navegación, el tráfico, la disponibilidad de vehículos y la validación GPS usan datos simulados. Tus datos se guardan únicamente en el almacenamiento local del navegador actual; no se sincronizan entre dispositivos ni se conectan con Waze, ECOBI, comercios o transporte municipal.</div></div>
+          <div class="guide-callout"><span aria-hidden="true">ⓘ</span><div><strong>Importante sobre esta demostración</strong>Las rutas, el tráfico, la disponibilidad y la validación de viajes son simulados. La ubicación del navegador es opcional: solo se solicita al pulsar el botón, se usa en esta pestaña para mostrar tu punto y no se guarda como coordenadas. Los viajes y preferencias se guardan únicamente en este navegador.</div></div>
           <div style="display:flex;justify-content:center;margin-top:18px"><button class="btn" data-goto="rutas">Entendido, planificar viaje →</button></div>
         </section>
 
         <section class="page" id="page-rutas">
-          <div class="welcome"><div><div class="eyebrow">Planificador multimodal · Santiago</div><h2>¿A dónde vamos?</h2><p>Prueba recorridos por el centro de Santiago con paraderos y puntos de micromovilidad ficticios.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
+          <div class="welcome"><div><div class="eyebrow">Planificador multimodal · Santiago</div><h2>¿A dónde vamos?</h2><p>Prueba recorridos desde el centro hasta Pudahuel, Maipú, Puente Alto y otras comunas.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
           <article class="card">
             <div class="route-form">
-              <div class="field"><label for="origin">Punto de partida · demo</label><select id="origin">
+              <div class="field"><label for="origin">Punto de partida</label><select id="origin">
                 <option value="plaza-armas">Plaza de Armas · Santiago Centro</option>
                 <option value="la-moneda">Palacio La Moneda · Centro</option>
                 <option value="metro-santa-lucia">Metro Santa Lucía · Centro</option>
@@ -317,6 +320,12 @@
                 <option value="quinta-normal">Parque Quinta Normal · Quinta Normal</option>
                 <option value="costanera-center">Costanera Center · Providencia</option>
                 <option value="plaza-nunoa">Plaza Ñuñoa · Ñuñoa</option>
+                <option value="aeropuerto">Aeropuerto Arturo Merino Benítez · Pudahuel</option>
+                <option value="plaza-maipu">Plaza de Maipú · Maipú</option>
+                <option value="plaza-puente-alto">Plaza de Puente Alto · Puente Alto</option>
+                <option value="plaza-san-bernardo">Plaza de San Bernardo · San Bernardo</option>
+                <option value="metro-bellavista-la-florida">Metro Bellavista de La Florida · La Florida</option>
+                <option value="parque-arauco">Parque Arauco · Las Condes</option>
               </select></div>
               <div class="field"><label for="destination">Destino · demo</label><select id="destination">
                 <option value="plaza-armas">Plaza de Armas · Santiago Centro</option>
@@ -328,16 +337,23 @@
                 <option value="quinta-normal">Parque Quinta Normal · Quinta Normal</option>
                 <option value="costanera-center">Costanera Center · Providencia</option>
                 <option value="plaza-nunoa">Plaza Ñuñoa · Ñuñoa</option>
+                <option value="aeropuerto">Aeropuerto Arturo Merino Benítez · Pudahuel</option>
+                <option value="plaza-maipu">Plaza de Maipú · Maipú</option>
+                <option value="plaza-puente-alto">Plaza de Puente Alto · Puente Alto</option>
+                <option value="plaza-san-bernardo">Plaza de San Bernardo · San Bernardo</option>
+                <option value="metro-bellavista-la-florida">Metro Bellavista de La Florida · La Florida</option>
+                <option value="parque-arauco">Parque Arauco · Las Condes</option>
               </select></div>
-              <div class="field"><label for="distance">Distancia estimada</label><div class="distance-field"><input id="distance" type="number" min="0.2" max="100" step="0.1" value="2.1"><span>km</span></div></div>
+              <div class="field"><label for="distance">Distancia estimada</label><div class="distance-field"><input id="distance" type="number" min="0.2" max="100" step="0.1" value="1.4"><span>km</span></div></div>
               <button class="btn" id="planRoute">Buscar rutas</button>
             </div>
-            <div class="notice" id="serviceNotice">Elige dos puntos de prueba de Santiago y pulsa “Buscar rutas”. No necesitas dar permisos de ubicación.</div>
-            <div class="route-help"><span aria-hidden="true">ⓘ</span><span><strong>Simulación interactiva:</strong> los lugares, paraderos, disponibilidad y congestión son datos ficticios. El fondo del mapa sí muestra las calles reales de Santiago.</span></div>
+            <div class="location-actions"><button class="btn secondary" id="useMyLocation" type="button">Usar mi ubicación actual</button><span class="location-status" id="locationStatus" role="status">Opcional · requiere permiso del navegador y conexión segura.</span></div>
+            <div class="notice" id="serviceNotice">Elige un origen y un destino, o activa tu ubicación actual. La distancia se estima automáticamente; pulsa “Buscar rutas” para comparar.</div>
+            <div class="route-help"><span aria-hidden="true">ⓘ</span><span><strong>Cómo leer los resultados:</strong> los kilómetros son una aproximación en línea recta entre puntos; tiempos, precios, recorridos, paraderos y vehículos son de demostración. La ubicación real solo se activa con tu permiso.</span></div>
           </article>
           <div class="map-layout">
             <article class="card">
-              <div class="map-header"><div><h3>Mapa de Santiago</h3><p>Centro, Providencia y Quinta Normal · puntos de prueba inventados</p></div><span class="live-pill"><i></i>SIMULACIÓN EN VIVO</span></div>
+              <div class="map-header"><div><h3>Mapa de Santiago</h3><p>Calles reales · ubicaciones de prueba y tu posición si activas el GPS</p></div><span class="live-pill"><i></i>TRÁFICO SIMULADO</span></div>
               <div class="map-controls">
                 <label><input type="checkbox" id="showStops" checked> Paraderos y metro</label>
                 <label><input type="checkbox" id="showVehicles" checked> Bicis y scooters</label>
@@ -346,8 +362,8 @@
                 <span id="lastUpdated" style="margin-left:auto">Actualizando…</span>
               </div>
               <div class="map-stage"><span class="map-tag">Santiago, Chile · Mapa real / datos ficticios</span><div id="routeMap" class="leaflet-map" role="img" aria-label="Mapa interactivo de Santiago con puntos de prueba"></div></div>
-              <div class="map-legend"><span class="legend-pin"><i></i>Metro / paradero de prueba</span><span class="legend-pin"><i></i>Movilidad compartida simulada</span><span class="legend-pin"><i></i>Congestión ficticia</span></div>
-              <div class="map-credit">Mapa © OpenStreetMap contributors · Las estaciones, vehículos y alertas son ficticios; no representan disponibilidad real.</div>
+              <div class="map-legend"><span class="legend-pin"><i></i>Metro / paradero de prueba</span><span class="legend-pin"><i></i>Movilidad compartida simulada</span><span class="legend-pin"><i></i>Congestión ficticia</span><span class="legend-pin"><i style="background:#356fda"></i>Tu ubicación (opcional)</span></div>
+              <div class="map-credit">Mapa © OpenStreetMap contributors · Los servicios, recorridos, vehículos y alertas son de demostración; no hay disponibilidad real.</div>
             </article>
             <article class="card route-panel">
               <div class="card-heading"><div><h3>Opciones para tu viaje</h3><p>Compara tiempo, costo y ahorro estimados.</p></div></div>
@@ -378,9 +394,9 @@
         </section>
 
         <section class="page" id="page-historial">
-          <div class="welcome"><div><div class="eyebrow">Actividad</div><h2>Historial de viajes</h2><p>Los viajes con validación GPS coincidente suman CO₂ evitado y puntos.</p></div></div>
-          <article class="card"><div class="card-heading"><div><h3>Tus viajes registrados</h3><p>Este historial se guarda en este navegador.</p></div><button class="btn secondary small" id="exportTrips">Exportar CSV</button></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Origen → destino</th><th>Modo</th><th>Distancia</th><th>CO₂ evitado</th><th>Validación</th></tr></thead><tbody id="tripRows"></tbody></table></div></article>
-          <div class="notice">Antifraude de demostración: se compara un estado de validación simulado. No se lee el GPS ni se consulta a proveedores externos.</div>
+          <div class="welcome"><div><div class="eyebrow">Actividad</div><h2>Historial de viajes</h2><p>Aquí aparecen solo los viajes que confirmas al pulsar “Registrar viaje”.</p></div></div>
+          <article class="card"><div class="card-heading"><div><h3>Tus viajes registrados</h3><p>Verás fecha, origen y destino, kilómetros, impacto estimado y resultado de la validación de prueba. Se guarda solo en este navegador.</p></div><button class="btn secondary small" id="exportTrips">Exportar CSV</button></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Origen → destino</th><th>Modo</th><th>Distancia</th><th>CO₂ evitado</th><th>Validación</th></tr></thead><tbody id="tripRows"></tbody></table></div></article>
+          <div class="notice">Para agregar un viaje: “Planificar ruta” → “Buscar rutas” → “Elegir” → “Registrar viaje”. La validación es simulada: el GPS opcional del mapa no confirma que hayas realizado el recorrido.</div>
         </section>
 
         <section class="page" id="page-alertas">
@@ -392,7 +408,7 @@
   </div>
   <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal"><h3 id="modalTitle">Finalizar viaje</h3><p id="modalDescription">Confirma que terminaste el recorrido para registrarlo.</p>
-      <div class="field" id="validationField"><label for="validationStatus">Validación de viaje (simulada)</label><select id="validationStatus"><option value="valid">GPS coincide con el proveedor</option><option value="invalid">Inconsistencia de GPS</option></select></div>
+      <div class="field" id="validationField"><label for="validationStatus">Resultado de prueba (no verifica el GPS)</label><select id="validationStatus"><option value="valid">Simulación: viaje coincide</option><option value="invalid">Simulación: viaje inconsistente</option></select></div>
       <div class="modal-actions"><button class="btn secondary" id="modalCancel">Cancelar</button><button class="btn" id="modalConfirm">Confirmar</button></div>
     </div>
   </div>
@@ -409,6 +425,9 @@
       var toastTimer;
       var mapInstances = {};
       var mapLayers = {};
+      var currentLocation = null;
+      var locationWatchId = null;
+      var locationCentered = false;
       var congestionLevels = [58, 72, 46, 63];
       var congestionIndex = 0;
       var congestionLevel = congestionLevels[0];
@@ -421,7 +440,13 @@
         "terminal-alameda": { name: "Terminal Alameda", detail: "Terminal Alameda · Estación Central", zone: "Estación Central", lat: -33.4518, lng: -70.6693 },
         "quinta-normal": { name: "Parque Quinta Normal", detail: "Parque Quinta Normal · Quinta Normal", zone: "Quinta Normal", lat: -33.4377, lng: -70.6816 },
         "costanera-center": { name: "Costanera Center", detail: "Costanera Center · Providencia", zone: "Providencia", lat: -33.4172, lng: -70.6065 },
-        "plaza-nunoa": { name: "Plaza Ñuñoa", detail: "Plaza Ñuñoa · Ñuñoa", zone: "Ñuñoa", lat: -33.4548, lng: -70.6005 }
+        "plaza-nunoa": { name: "Plaza Ñuñoa", detail: "Plaza Ñuñoa · Ñuñoa", zone: "Ñuñoa", lat: -33.4548, lng: -70.6005 },
+        "aeropuerto": { name: "Aeropuerto Arturo Merino Benítez", detail: "Aeropuerto Arturo Merino Benítez · Pudahuel", zone: "Pudahuel", lat: -33.3929, lng: -70.7858 },
+        "plaza-maipu": { name: "Plaza de Maipú", detail: "Plaza de Maipú · Maipú", zone: "Maipú", lat: -33.5103, lng: -70.7570 },
+        "plaza-puente-alto": { name: "Plaza de Puente Alto", detail: "Plaza de Puente Alto · Puente Alto", zone: "Puente Alto", lat: -33.6113, lng: -70.5752 },
+        "plaza-san-bernardo": { name: "Plaza de San Bernardo", detail: "Plaza de San Bernardo · San Bernardo", zone: "San Bernardo", lat: -33.5924, lng: -70.6994 },
+        "metro-bellavista-la-florida": { name: "Metro Bellavista de La Florida", detail: "Metro Bellavista de La Florida · La Florida", zone: "La Florida", lat: -33.5228, lng: -70.5985 },
+        "parque-arauco": { name: "Parque Arauco", detail: "Parque Arauco · Las Condes", zone: "Las Condes", lat: -33.4023, lng: -70.5780 }
       };
       var demoStops = [
         { name: "Metro Universidad de Chile", type: "Metro", lat: -33.4420, lng: -70.6501 },
@@ -432,14 +457,23 @@
         { name: "Metro Bellas Artes", type: "Metro", lat: -33.4357, lng: -70.6438 },
         { name: "Metro Cumming", type: "Metro", lat: -33.4364, lng: -70.6666 },
         { name: "Paradero PQ44 · Quinta Normal", type: "Paradero RED · prueba", lat: -33.4365, lng: -70.6792 },
-        { name: "Metro Los Héroes", type: "Metro", lat: -33.4458, lng: -70.6550 }
+        { name: "Metro Los Héroes", type: "Metro", lat: -33.4458, lng: -70.6550 },
+        { name: "Paradero demo · Aeropuerto", type: "Paradero RED · prueba", lat: -33.3932, lng: -70.7853 },
+        { name: "Metro Plaza de Maipú", type: "Metro · punto de referencia", lat: -33.5104, lng: -70.7571 },
+        { name: "Metro Plaza de Puente Alto", type: "Metro · punto de referencia", lat: -33.6114, lng: -70.5754 },
+        { name: "Paradero demo · San Bernardo", type: "Paradero RED · prueba", lat: -33.5921, lng: -70.6990 },
+        { name: "Metro Bellavista de La Florida", type: "Metro · punto de referencia", lat: -33.5228, lng: -70.5985 },
+        { name: "Paradero demo · Parque Arauco", type: "Paradero RED · prueba", lat: -33.4026, lng: -70.5783 }
       ];
       var demoVehicles = [
         { name: "Estación Plaza de Armas", type: "ECOBI · 4 bicis / 2 scooters demo", lat: -33.4365, lng: -70.6484 },
         { name: "Punto Lastarria", type: "3 bicicletas demo", lat: -33.4397, lng: -70.6419 },
         { name: "Punto Baquedano", type: "5 scooters demo", lat: -33.4370, lng: -70.6329 },
         { name: "Parque Bustamante", type: "2 bicicletas / 1 scooter demo", lat: -33.4442, lng: -70.6297 },
-        { name: "Costanera Center", type: "4 scooters demo", lat: -33.4177, lng: -70.6050 }
+        { name: "Costanera Center", type: "4 scooters demo", lat: -33.4177, lng: -70.6050 },
+        { name: "Punto de bicis · Maipú", type: "3 bicicletas demo", lat: -33.5110, lng: -70.7558 },
+        { name: "Punto de scooters · La Florida", type: "2 scooters demo", lat: -33.5240, lng: -70.5970 },
+        { name: "Punto de bicis · Puente Alto", type: "4 bicicletas demo", lat: -33.6100, lng: -70.5737 }
       ];
       var routeColors = { eco: "#21805c", fast: "#d98a36", transit: "#397db5" };
       var pageNames = {
@@ -566,8 +600,8 @@
         var rows = state.trips.slice().sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
         document.getElementById("tripRows").innerHTML = rows.length ? rows.map(function (trip) {
           var date = new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(new Date(trip.date));
-          return "<tr><td>" + escapeHtml(date) + "</td><td>" + escapeHtml(trip.origin) + " → " + escapeHtml(trip.destination) + "</td><td>" + escapeHtml(trip.mode) + "</td><td>" + trip.km.toFixed(1) + " km</td><td>" + (trip.valid ? trip.co2.toFixed(2) + " kg" : "—") + '</td><td><span class="status ' + (trip.valid ? "" : "rejected") + '">' + (trip.valid ? "Validado · +" + trip.points + " pts" : "No validado") + "</span></td></tr>";
-        }).join("") : '<tr><td colspan="6" class="empty">Aún no tienes viajes. Planifica uno y regístralo aquí.</td></tr>';
+          return "<tr><td>" + escapeHtml(date) + "</td><td>" + escapeHtml(trip.origin) + " → " + escapeHtml(trip.destination) + "</td><td>" + escapeHtml(trip.mode) + "</td><td>" + trip.km.toFixed(1) + " km</td><td>" + (trip.valid ? trip.co2.toFixed(2) + " kg" : "—") + '</td><td><span class="status ' + (trip.valid ? "" : "rejected") + '">' + (trip.valid ? "Validado (demo) · +" + trip.points + " pts" : "No validado (demo)") + "</span></td></tr>";
+        }).join("") : '<tr><td colspan="6" class="empty">Todavía no hay viajes registrados. Ve a “Planificar ruta”, busca opciones, pulsa “Elegir” y luego “Registrar viaje”.</td></tr>';
       }
 
       function renderCoupons() {
@@ -593,7 +627,8 @@
       }
 
       function getPlace(selectId) {
-        return demoPlaces[document.getElementById(selectId).value];
+        var placeId = document.getElementById(selectId).value;
+        return placeId === "my-location" ? currentLocation : demoPlaces[placeId];
       }
 
       function haversineKm(from, to) {
@@ -612,6 +647,118 @@
         if (!from || !to) return;
         var distance = from === to ? 0.2 : haversineKm(from, to);
         document.getElementById("distance").value = Math.max(0.2, distance).toFixed(1);
+        if (currentRoutes.length) {
+          currentRoutes = [];
+          if (mapLayers.routeMap) {
+            mapLayers.routeMap.route.clearLayers();
+            mapLayers.routeMap.endpoints.clearLayers();
+          }
+          document.getElementById("routeResults").innerHTML = '<div class="empty">Cambiaste el origen o destino. Pulsa “Buscar rutas” para recalcular las opciones.</div>';
+        }
+      }
+
+      function drawCurrentLocation() {
+        var map = mapInstances.routeMap;
+        var layers = mapLayers.routeMap;
+        if (!currentLocation || !map || !layers || !layers.location) return;
+        layers.location.clearLayers();
+        L.circle([currentLocation.lat, currentLocation.lng], {
+          radius: Math.max(25, currentLocation.accuracy),
+          color: "#356fda",
+          weight: 1,
+          fillColor: "#356fda",
+          fillOpacity: 0.12
+        }).addTo(layers.location);
+        var icon = L.divIcon({
+          className: "",
+          html: '<div class="live-location-dot"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        L.marker([currentLocation.lat, currentLocation.lng], { icon: icon, zIndexOffset: 1000 })
+          .bindPopup(popupMarkup("Mi ubicación actual", "Precisión aproximada ±" + Math.round(currentLocation.accuracy) + " m · dato del navegador"))
+          .addTo(layers.location);
+        if (!locationCentered) {
+          var points = [L.latLng(currentLocation.lat, currentLocation.lng)];
+          var destination = getPlace("destination");
+          if (destination) points.push(L.latLng(destination.lat, destination.lng));
+          map.fitBounds(L.latLngBounds(points).pad(0.22), { maxZoom: 13, animate: false });
+          locationCentered = true;
+        }
+      }
+
+      function handleLocationError(error) {
+        var messages = {
+          1: "Permiso denegado. Puedes seguir usando los puntos de prueba.",
+          2: "No se pudo determinar tu ubicación. Revisa la señal y vuelve a intentar.",
+          3: "La ubicación tardó demasiado. Vuelve a intentarlo."
+        };
+        var message = messages[error.code] || "No se pudo obtener tu ubicación. Puedes elegir un punto de prueba.";
+        if (locationWatchId !== null) navigator.geolocation.clearWatch(locationWatchId);
+        locationWatchId = null;
+        document.getElementById("useMyLocation").textContent = currentLocation ? "Reanudar seguimiento" : "Usar mi ubicación actual";
+        setText("locationStatus", currentLocation ? message + " Se conserva la última posición en esta pestaña." : message);
+        showToast(message);
+      }
+
+      function startLocationTracking() {
+        if (!navigator.geolocation) {
+          var unsupported = "Este navegador no permite obtener ubicación. Elige un punto de prueba.";
+          setText("locationStatus", unsupported);
+          showToast(unsupported);
+          return;
+        }
+        if (!window.isSecureContext) {
+          var secureContextMessage = "El navegador solo permite ubicación en una conexión segura (HTTPS).";
+          setText("locationStatus", secureContextMessage);
+          showToast(secureContextMessage);
+          return;
+        }
+        locationCentered = false;
+        document.getElementById("useMyLocation").textContent = "Detener seguimiento";
+        setText("locationStatus", "Solicitando permiso y buscando ubicación…");
+        locationWatchId = navigator.geolocation.watchPosition(function (position) {
+          var accuracy = Number(position.coords.accuracy) || 0;
+          currentLocation = {
+            name: "Mi ubicación actual",
+            detail: "Ubicación actual · navegador",
+            zone: "Santiago",
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: accuracy
+          };
+          var origin = document.getElementById("origin");
+          var locationOption = origin.querySelector('option[value="my-location"]');
+          if (!locationOption) {
+            locationOption = document.createElement("option");
+            locationOption.value = "my-location";
+            locationOption.textContent = "Mi ubicación actual";
+            origin.insertBefore(locationOption, origin.firstChild);
+          }
+          origin.value = "my-location";
+          updateDistanceFromPlaces();
+          drawCurrentLocation();
+          var updatedAt = new Intl.DateTimeFormat("es-CL", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
+          setText("locationStatus", "Ubicación en vivo · actualizada " + updatedAt + " · precisión ±" + Math.round(accuracy) + " m. No se guardan las coordenadas.");
+        }, handleLocationError, {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 20000
+        });
+      }
+
+      function stopLocationTracking() {
+        if (locationWatchId !== null) navigator.geolocation.clearWatch(locationWatchId);
+        locationWatchId = null;
+        document.getElementById("useMyLocation").textContent = currentLocation ? "Reanudar seguimiento" : "Usar mi ubicación actual";
+        setText("locationStatus", currentLocation
+          ? "Seguimiento pausado. La última posición sigue solo en esta pestaña hasta que la recargues."
+          : "Seguimiento detenido. Puedes continuar con los puntos de prueba.");
+      }
+
+      function toggleLocationTracking() {
+        if (locationWatchId !== null) stopLocationTracking();
+        else startLocationTracking();
       }
 
       function makeMapIcon(kind, symbol) {
@@ -698,7 +845,8 @@
             vehicles: L.layerGroup().addTo(map),
             traffic: L.layerGroup().addTo(map),
             route: L.layerGroup().addTo(map),
-            endpoints: L.layerGroup().addTo(map)
+            endpoints: L.layerGroup().addTo(map),
+            location: L.layerGroup().addTo(map)
           };
           drawMapPins(mapId);
           drawTrafficLayer(mapId);
@@ -710,8 +858,8 @@
         var map = mapInstances.routeMap;
         var layers = mapLayers.routeMap;
         var route = currentRoutes.filter(function (item) { return item.id === routeId; })[0];
-        var from = getPlace("origin");
-        var to = getPlace("destination");
+        var from = route && route.origin ? route.origin : getPlace("origin");
+        var to = route && route.destination ? route.destination : getPlace("destination");
         if (!map || !layers || !route || !from || !to) return;
         layers.route.clearLayers();
         layers.endpoints.clearLayers();
@@ -767,10 +915,10 @@
       function createRoutes() {
         var originId = document.getElementById("origin").value;
         var destinationId = document.getElementById("destination").value;
-        var origin = demoPlaces[originId];
-        var destination = demoPlaces[destinationId];
+        var origin = getPlace("origin");
+        var destination = getPlace("destination");
         var distance = Number(document.getElementById("distance").value);
-        if (!origin || !destination) { showToast("Selecciona un origen y un destino de prueba."); return; }
+        if (!origin || !destination) { showToast("Selecciona un punto de partida y un destino."); return; }
         if (originId === destinationId) { showToast("El origen y el destino deben ser distintos."); return; }
         if (!Number.isFinite(distance) || distance <= 0 || distance > 100) { showToast("Ingresa una distancia entre 0,1 y 100 km."); return; }
         var now = new Date();
@@ -784,9 +932,9 @@
         }
         var d = distance;
         currentRoutes = [
-          { id: "eco", name: "Más sostenible", mode: "Bicicleta + Metro + caminata", duration: Math.round(10 + d * 5.1), cost: Math.round(950 + d * 135), emissions: d * 0.035, description: "Bici compartida demo · Metro L1/L5 · caminata final en " + destination.zone, points: Math.max(5, Math.round(d * 10)) },
-          { id: "fast", name: "Más rápida", mode: "Scooter + transporte público", duration: Math.round(8 + d * 4.1), cost: Math.round(1400 + d * 210), emissions: d * 0.05, description: "Scooter demo por Alameda / Providencia · conexión Metro", points: Math.max(4, Math.round(d * 8)) },
-          { id: "transit", name: "Más económica", mode: "Metro + bus RED de prueba", duration: Math.round(15 + d * 5.2), cost: 750, emissions: d * 0.045, description: "Metro y paradero ficticio · llegada a " + destination.name, points: Math.max(3, Math.round(d * 6)) }
+          { id: "eco", name: "Más sostenible", origin: origin, destination: destination, distance: d, mode: "Bicicleta + Metro + caminata", duration: Math.round(10 + d * 5.1), cost: Math.round(950 + d * 135), emissions: d * 0.035, description: "Bici compartida demo · Metro L1/L5 · caminata final en " + destination.zone, points: Math.max(5, Math.round(d * 10)) },
+          { id: "fast", name: "Más rápida", origin: origin, destination: destination, distance: d, mode: "Scooter + transporte público", duration: Math.round(8 + d * 4.1), cost: Math.round(1400 + d * 210), emissions: d * 0.05, description: "Scooter demo por Alameda / Providencia · conexión Metro", points: Math.max(4, Math.round(d * 8)) },
+          { id: "transit", name: "Más económica", origin: origin, destination: destination, distance: d, mode: "Metro + bus RED de prueba", duration: Math.round(15 + d * 5.2), cost: 750, emissions: d * 0.045, description: "Metro y paradero ficticio · llegada a " + destination.name, points: Math.max(3, Math.round(d * 6)) }
         ];
         document.getElementById("routeResults").innerHTML =
           '<div class="notice warning">⚠ Alameda: ' + congestionLevel + '% de congestión simulada. La cifra es ficticia; usa el mapa para explorar los puntos.</div>' +
@@ -804,7 +952,7 @@
         drawDemoRoute(routeId);
         pendingAction = { type: "trip", route: route };
         setText("modalTitle", "Finalizar viaje");
-        setText("modalDescription", "Registra el recorrido de " + route.mode + " entre " + getPlace("origin").name + " y " + getPlace("destination").name + ". La validación GPS es simulada.");
+        setText("modalDescription", "Registra el recorrido de " + route.mode + " entre " + route.origin.name + " y " + route.destination.name + ". La validación es ficticia y no comprueba tu ubicación.");
         document.getElementById("validationField").style.display = "grid";
         document.getElementById("validationStatus").value = "valid";
         document.getElementById("modalConfirm").textContent = "Registrar viaje";
@@ -847,11 +995,11 @@
         if (pendingAction.type === "trip") {
           var route = pendingAction.route;
           var valid = document.getElementById("validationStatus").value === "valid";
-          var km = Number(document.getElementById("distance").value);
+          var km = route.distance;
           state.trips.push({
             id: "trip-" + Date.now(), date: new Date().toISOString(),
-            origin: document.getElementById("origin").selectedOptions[0].textContent.trim(),
-            destination: document.getElementById("destination").selectedOptions[0].textContent.trim(),
+            origin: route.origin.name,
+            destination: route.destination.name,
             mode: route.mode, km: km, co2: valid ? Math.max(0, km * carKgPerKm - route.emissions) : 0,
             points: valid ? route.points : 0, valid: valid
           });
@@ -902,6 +1050,7 @@
       document.querySelectorAll("[data-goto]").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.goto); }); });
       document.getElementById("menuToggle").addEventListener("click", function () { document.getElementById("sidebar").classList.toggle("open"); });
       document.getElementById("planRoute").addEventListener("click", createRoutes);
+      document.getElementById("useMyLocation").addEventListener("click", toggleLocationTracking);
       document.getElementById("origin").addEventListener("change", updateDistanceFromPlaces);
       document.getElementById("destination").addEventListener("change", updateDistanceFromPlaces);
       document.getElementById("routeResults").addEventListener("click", function (event) {
@@ -932,6 +1081,9 @@
       document.getElementById("modalConfirm").addEventListener("click", confirmModal);
       document.getElementById("modalBackdrop").addEventListener("click", function (event) { if (event.target.id === "modalBackdrop") { pendingAction = null; event.currentTarget.classList.remove("open"); } });
       document.getElementById("exportTrips").addEventListener("click", exportCsv);
+      window.addEventListener("pagehide", function () {
+        if (locationWatchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(locationWatchId);
+      });
       document.addEventListener("keydown", function (event) { if (event.key === "Escape") { pendingAction = null; document.getElementById("modalBackdrop").classList.remove("open"); document.getElementById("sidebar").classList.remove("open"); } });
       render();
       updateDistanceFromPlaces();
