@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#102c27">
   <meta name="description" content="Planifica viajes sostenibles, compara alternativas multimodales y descubre el impacto positivo de cada recorrido con We Móvil.">
   <title>We Móvil — movilidad sostenible</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
       color-scheme: light;
@@ -90,9 +91,40 @@
     .card-heading h3 { margin: 0; font-size: 15px; letter-spacing: -.2px; }
     .card-heading p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
     .text-link { border: 0; padding: 4px 0; background: none; color: var(--green); font-size: 11px; font-weight: 700; }
-    .map-illustration { height: 222px; position: relative; overflow: hidden; border-radius: 12px; background: #eaf0e8; }
-    .map-illustration svg { width: 100%; height: 100%; display: block; }
-    .map-tag { position: absolute; left: 13px; top: 12px; background: #fff; padding: 7px 10px; border-radius: 8px; box-shadow: 0 2px 9px #223a3020; font-size: 10px; color: var(--muted); }
+    .map-illustration { height: 235px; position: relative; overflow: hidden; border-radius: 12px; background: #e8eee8; }
+    .map-illustration .leaflet-map { height: 100%; }
+    .map-stage { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #e8eee8; }
+    .map-stage .leaflet-map { width: 100%; height: 420px; }
+    .map-tag { position: absolute; left: 13px; top: 12px; z-index: 500; background: #fff; padding: 7px 10px; border-radius: 8px; box-shadow: 0 2px 9px #223a3020; font-size: 10px; color: var(--muted); pointer-events: none; }
+    .map-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+    .map-header h3 { margin: 0; font-size: 15px; }
+    .map-header p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .live-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #f1d8d1; border-radius: 999px; padding: 7px 10px; color: #a64c40; background: #fff7f4; font-size: 9px; font-weight: 800; letter-spacing: .45px; white-space: nowrap; }
+    .live-pill i { width: 7px; height: 7px; border-radius: 50%; background: #db5b4b; box-shadow: 0 0 0 3px #db5b4b20; }
+    .map-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 12px 0; color: var(--muted); font-size: 10px; }
+    .map-controls label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    .map-controls input { accent-color: var(--green); }
+    .map-legend { display: flex; flex-wrap: wrap; gap: 9px 16px; margin-top: 11px; color: var(--muted); font-size: 10px; }
+    .legend-pin { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-pin i { width: 10px; height: 10px; display: inline-block; border-radius: 50%; background: #327fc2; }
+    .legend-pin:nth-child(2) i { background: #e58b39; }
+    .legend-pin:nth-child(3) i { background: #d54e43; }
+    .map-credit { margin-top: 8px; color: #88948e; font-size: 9px; }
+    .map-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(285px, .85fr); gap: 16px; margin-top: 16px; align-items: start; }
+    .route-panel { min-height: 420px; }
+    .route-panel .route-list { margin-top: 0; }
+    .route-panel .route-option { grid-template-columns: 1fr; }
+    .route-panel .route-actions { justify-content: space-between; }
+    .route-panel .route-cost { text-align: left; }
+    .map-point-icon { display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid white; border-radius: 50% 50% 50% 8px; transform: rotate(-45deg); color: white; font-size: 13px; font-weight: 800; box-shadow: 0 3px 8px #18352d45; }
+    .map-point-icon span { transform: rotate(45deg); }
+    .map-point-icon.stop { background: #327fc2; }
+    .map-point-icon.vehicle { background: #e58b39; }
+    .map-point-icon.start { background: #1c745b; }
+    .map-point-icon.end { background: #d54e43; }
+    .leaflet-popup-content-wrapper { border-radius: 11px !important; }
+    .map-popup-title { font-weight: 750; color: var(--ink); margin-bottom: 4px; }
+    .map-popup-note { color: var(--muted); font-size: 11px; line-height: 1.4; }
     .legend { display: flex; gap: 14px; padding-top: 13px; color: var(--muted); font-size: 10px; flex-wrap: wrap; }
     .legend i { width: 8px; height: 8px; display: inline-block; border-radius: 50%; margin-right: 5px; background: var(--green); }
     .legend span:nth-child(2) i { background: #68a6bd; }
@@ -104,6 +136,9 @@
     .alert-item p { color: var(--muted); font-size: 10px; margin: 4px 0 0; line-height: 1.45; }
     .alert-time { display: block; font-size: 9px; color: #9aa8a2; margin-top: 5px; }
     .route-form { display: grid; grid-template-columns: 1fr 1fr 120px auto; gap: 11px; align-items: end; }
+    .distance-field { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 9px; background: #fff; padding-right: 11px; }
+    .distance-field input { border: 0; box-shadow: none !important; }
+    .distance-field span { color: var(--muted); font-size: 11px; }
     .field { display: grid; gap: 6px; min-width: 0; }
     .field label { color: var(--muted); font-size: 10px; font-weight: 650; }
     .field input, .field select { min-width: 0; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 11px 12px; color: var(--ink); background: #fff; outline: none; font-size: 12px; }
@@ -155,6 +190,7 @@
       .stats { grid-template-columns: repeat(2, 1fr); }
       .route-form { grid-template-columns: 1fr 1fr; }
       .hero-orbit { display: none; }
+      .map-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 700px) {
       .shell { display: block; }
@@ -172,6 +208,8 @@
       .route-option { grid-template-columns: 1fr; }
       .route-cost { text-align: left; }
       .route-actions { justify-content: space-between; }
+      .map-stage .leaflet-map { height: 340px; }
+      .route-panel { min-height: auto; }
     }
   </style>
 </head>
@@ -234,21 +272,10 @@
             <article class="card">
               <div class="card-heading"><div><h3>Tu próxima ruta</h3><p>Una vista rápida de movilidad en la ciudad</p></div><button class="text-link" data-goto="rutas">Planificar →</button></div>
               <div class="map-illustration">
-                <span class="map-tag">Mapa ilustrativo · Demo</span>
-                <svg viewBox="0 0 740 260" role="img" aria-label="Mapa esquemático con ruta multimodal">
-                  <rect width="740" height="260" fill="#eaf0e8"/>
-                  <path d="M-20 62 L760 199 M-20 186 L760 55 M115 -20 L215 280 M510 -20 L410 280 M670 -10 L585 280" stroke="#fff" stroke-width="24" fill="none"/>
-                  <path d="M-20 62 L760 199 M-20 186 L760 55 M115 -20 L215 280 M510 -20 L410 280 M670 -10 L585 280" stroke="#d7e1d8" stroke-width="2" fill="none"/>
-                  <path d="M105 186 C175 176 199 118 282 126 S400 169 449 112 S548 92 626 76" stroke="#1c745b" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 1" fill="none"/>
-                  <circle cx="105" cy="186" r="9" fill="#fff" stroke="#1c745b" stroke-width="5"/>
-                  <circle cx="282" cy="126" r="8" fill="#68a6bd" stroke="#fff" stroke-width="3"/>
-                  <circle cx="449" cy="112" r="8" fill="#e89645" stroke="#fff" stroke-width="3"/>
-                  <circle cx="626" cy="76" r="9" fill="#fff" stroke="#c65a4e" stroke-width="5"/>
-                  <g fill="#c6d9c7"><rect x="295" y="23" width="72" height="24" rx="8"/><rect x="523" y="188" width="92" height="25" rx="8"/><rect x="44" y="90" width="57" height="28" rx="8"/><rect x="335" y="212" width="54" height="18" rx="7"/></g>
-                  <text x="298" y="39" font-size="9" fill="#56705f">PARQUE</text><text x="536" y="204" font-size="9" fill="#56705f">BIBLIOTECA</text>
-                </svg>
+                <span class="map-tag">Santiago Centro · datos de prueba</span>
+                <div id="homeMap" class="leaflet-map" role="img" aria-label="Mapa interactivo de Santiago Centro"></div>
               </div>
-              <div class="legend"><span><i></i>A pie</span><span><i></i>Transporte público</span><span><i></i>Bici / scooter</span></div>
+              <div class="map-legend"><span class="legend-pin"><i></i>Paraderos</span><span class="legend-pin"><i></i>Bicis y scooters</span><span class="legend-pin"><i></i>Congestión simulada</span></div>
             </article>
             <article class="card">
               <div class="card-heading"><div><h3>Alertas de movilidad</h3><p>Incidentes recientes en la ciudad</p></div><button class="text-link" data-goto="alertas">Ver todas</button></div>
@@ -265,7 +292,7 @@
           <div class="welcome"><div><div class="eyebrow">Guía rápida</div><h2>Tu primer viaje, paso a paso.</h2><p>En pocos minutos puedes explorar las funciones principales de We Móvil.</p></div><span class="badge">6 pasos · 2 minutos</span></div>
           <p class="guide-intro">La idea es sencilla: indica hacia dónde vas, compara opciones sostenibles, completa un viaje y revisa cómo tus decisiones suman a tus metas. Puedes volver a esta guía cuando quieras.</p>
           <div class="grid guide-grid">
-            <article class="guide-step"><div class="guide-step-head"><span class="step-number">01</span><h3>Indica tu origen y destino</h3></div><p>Abre <strong>Planificar ruta</strong>, escribe ambos lugares y una distancia aproximada en kilómetros. En esta versión no necesitas activar el GPS: puedes escribir todo manualmente.</p><button class="text-link" data-goto="rutas">Ir al planificador →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">01</span><h3>Elige origen y destino</h3></div><p>Abre <strong>Planificar ruta</strong> y selecciona dos lugares de prueba de Santiago. La distancia aproximada se calcula automáticamente; no necesitas activar el GPS.</p><button class="text-link" data-goto="rutas">Ir al planificador →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">02</span><h3>Compara las alternativas</h3></div><p>Pulsa <strong>Buscar rutas</strong>. Revisa duración, costo estimado y CO₂ evitado. “Más sostenible”, “Más rápida” y “Más económica” son opciones simuladas para que puedas explorar la experiencia.</p><button class="text-link" data-goto="rutas">Ver rutas →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">03</span><h3>Elige y registra el viaje</h3></div><p>Pulsa <strong>Elegir</strong> en una ruta. Para esta demostración, selecciona “GPS coincide con el proveedor” y confirma para registrar un viaje válido; elige “Inconsistencia” para probar la validación antifraude.</p><button class="text-link" data-goto="rutas">Probar un viaje →</button></article>
             <article class="guide-step"><div class="guide-step-head"><span class="step-number">04</span><h3>Revisa tu impacto</h3></div><p>Un viaje validado actualiza automáticamente el historial, los puntos y el CO₂ estimado que evitaste frente a recorrer la misma distancia en auto. Los viajes no validados quedan registrados, pero no suman beneficios.</p><button class="text-link" data-goto="impacto">Ver mi impacto →</button></article>
@@ -277,21 +304,56 @@
         </section>
 
         <section class="page" id="page-rutas">
-          <div class="welcome"><div><div class="eyebrow">Planificador multimodal</div><h2>¿A dónde vamos?</h2><p>Compara opciones a pie, en transporte público, bicicleta y scooter.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
+          <div class="welcome"><div><div class="eyebrow">Planificador multimodal · Santiago</div><h2>¿A dónde vamos?</h2><p>Prueba recorridos por el centro de Santiago con paraderos y puntos de micromovilidad ficticios.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
           <article class="card">
             <div class="route-form">
-              <div class="field"><label for="origin">Origen</label><input id="origin" placeholder="Ej. Plaza Central" value="Plaza Central"></div>
-              <div class="field"><label for="destination">Destino</label><input id="destination" placeholder="Ej. Parque Norte"></div>
-              <div class="field"><label for="distance">Distancia estimada (km)</label><input id="distance" type="number" min="0.2" max="100" step="0.1" value="4.2"></div>
+              <div class="field"><label for="origin">Punto de partida · demo</label><select id="origin">
+                <option value="plaza-armas">Plaza de Armas · Santiago Centro</option>
+                <option value="la-moneda">Palacio La Moneda · Centro</option>
+                <option value="metro-santa-lucia">Metro Santa Lucía · Centro</option>
+                <option value="metro-baquedano">Metro Baquedano · Providencia</option>
+                <option value="parque-bustamante">Parque Bustamante · Providencia</option>
+                <option value="terminal-alameda">Terminal Alameda · Estación Central</option>
+                <option value="quinta-normal">Parque Quinta Normal · Quinta Normal</option>
+                <option value="costanera-center">Costanera Center · Providencia</option>
+                <option value="plaza-nunoa">Plaza Ñuñoa · Ñuñoa</option>
+              </select></div>
+              <div class="field"><label for="destination">Destino · demo</label><select id="destination">
+                <option value="plaza-armas">Plaza de Armas · Santiago Centro</option>
+                <option value="la-moneda">Palacio La Moneda · Centro</option>
+                <option value="metro-santa-lucia">Metro Santa Lucía · Centro</option>
+                <option value="metro-baquedano" selected>Metro Baquedano · Providencia</option>
+                <option value="parque-bustamante">Parque Bustamante · Providencia</option>
+                <option value="terminal-alameda">Terminal Alameda · Estación Central</option>
+                <option value="quinta-normal">Parque Quinta Normal · Quinta Normal</option>
+                <option value="costanera-center">Costanera Center · Providencia</option>
+                <option value="plaza-nunoa">Plaza Ñuñoa · Ñuñoa</option>
+              </select></div>
+              <div class="field"><label for="distance">Distancia estimada</label><div class="distance-field"><input id="distance" type="number" min="0.2" max="100" step="0.1" value="2.1"><span>km</span></div></div>
               <button class="btn" id="planRoute">Buscar rutas</button>
             </div>
-            <div class="notice" id="serviceNotice">La búsqueda usa ejemplos locales; no requiere GPS. Los datos no son tráfico ni disponibilidad en vivo.</div>
-            <div class="route-help"><span aria-hidden="true">ⓘ</span><span><strong>Cómo usarlo:</strong> escribe los lugares, ajusta la distancia y selecciona “Buscar rutas”. Después pulsa “Elegir” en tu alternativa preferida para registrar una prueba de viaje.</span></div>
-            <div id="routeResults" class="route-list"></div>
+            <div class="notice" id="serviceNotice">Elige dos puntos de prueba de Santiago y pulsa “Buscar rutas”. No necesitas dar permisos de ubicación.</div>
+            <div class="route-help"><span aria-hidden="true">ⓘ</span><span><strong>Simulación interactiva:</strong> los lugares, paraderos, disponibilidad y congestión son datos ficticios. El fondo del mapa sí muestra las calles reales de Santiago.</span></div>
           </article>
-          <div class="grid dashboard-grid" style="margin-top:16px">
-            <article class="card"><div class="card-heading"><div><h3>Mapa de ruta</h3><p>Esquema ilustrativo de los tramos seleccionados</p></div></div><div class="map-illustration"><span class="map-tag">No representa navegación GPS</span><svg viewBox="0 0 740 260" aria-label="Mapa ilustrativo"><rect width="740" height="260" fill="#eaf0e8"/><path d="M-20 66 L760 200 M-20 190 L760 54 M120 -20 L215 280 M510 -20 L405 280 M670 -10 L590 280" stroke="#fff" stroke-width="25" fill="none"/><path d="M90 180 C190 175 190 116 300 130 S418 164 475 110 S560 101 650 70" stroke="#1c745b" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="90" cy="180" r="9" fill="#fff" stroke="#1c745b" stroke-width="5"/><circle cx="650" cy="70" r="9" fill="#fff" stroke="#c65a4e" stroke-width="5"/></svg></div></article>
-            <article class="card"><div class="card-heading"><div><h3>Antes de salir</h3><p>Información importante para tu viaje</p></div></div><div class="alert-item critical"><i class="alert-dot"></i><div><h4>Tráfico y cierres</h4><p>Consulta las alertas de demostración antes de salir; en una versión conectada se requerirían APIs externas.</p></div></div><div class="alert-item"><i class="alert-dot"></i><div><h4>Disponibilidad</h4><p>Bicis y scooters se muestran como lugares de ejemplo, no como unidades disponibles en vivo.</p></div></div></article>
+          <div class="map-layout">
+            <article class="card">
+              <div class="map-header"><div><h3>Mapa de Santiago</h3><p>Centro, Providencia y Quinta Normal · puntos de prueba inventados</p></div><span class="live-pill"><i></i>SIMULACIÓN EN VIVO</span></div>
+              <div class="map-controls">
+                <label><input type="checkbox" id="showStops" checked> Paraderos y metro</label>
+                <label><input type="checkbox" id="showVehicles" checked> Bicis y scooters</label>
+                <label><input type="checkbox" id="showTraffic" checked> Tráfico demo</label>
+                <span id="trafficSummary" style="color:#a64c40;font-weight:700">Alameda · 58% congestión simulada</span>
+                <span id="lastUpdated" style="margin-left:auto">Actualizando…</span>
+              </div>
+              <div class="map-stage"><span class="map-tag">Santiago, Chile · Mapa real / datos ficticios</span><div id="routeMap" class="leaflet-map" role="img" aria-label="Mapa interactivo de Santiago con puntos de prueba"></div></div>
+              <div class="map-legend"><span class="legend-pin"><i></i>Metro / paradero de prueba</span><span class="legend-pin"><i></i>Movilidad compartida simulada</span><span class="legend-pin"><i></i>Congestión ficticia</span></div>
+              <div class="map-credit">Mapa © OpenStreetMap contributors · Las estaciones, vehículos y alertas son ficticios; no representan disponibilidad real.</div>
+            </article>
+            <article class="card route-panel">
+              <div class="card-heading"><div><h3>Opciones para tu viaje</h3><p>Compara tiempo, costo y ahorro estimados.</p></div></div>
+              <div id="routeResults"><div class="empty">Selecciona origen y destino, luego busca rutas para ver la simulación.</div></div>
+              <div class="notice warning">Los minutos y precios son una demostración. Confirma los datos de un servicio real antes de viajar.</div>
+            </article>
           </div>
         </section>
 
@@ -335,6 +397,7 @@
     </div>
   </div>
   <div class="toast" id="toast" role="status"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     (function () {
       "use strict";
@@ -344,14 +407,49 @@
       var currentRoutes = [];
       var pendingAction = null;
       var toastTimer;
+      var mapInstances = {};
+      var mapLayers = {};
+      var congestionLevels = [58, 72, 46, 63];
+      var congestionIndex = 0;
+      var congestionLevel = congestionLevels[0];
+      var demoPlaces = {
+        "plaza-armas": { name: "Plaza de Armas", detail: "Plaza de Armas · Santiago Centro", zone: "Santiago Centro", lat: -33.4372, lng: -70.6506 },
+        "la-moneda": { name: "Palacio La Moneda", detail: "Palacio La Moneda · Centro", zone: "Centro", lat: -33.4429, lng: -70.6536 },
+        "metro-santa-lucia": { name: "Metro Santa Lucía", detail: "Metro Santa Lucía · Centro", zone: "Centro", lat: -33.4425, lng: -70.6451 },
+        "metro-baquedano": { name: "Metro Baquedano", detail: "Metro Baquedano · Providencia", zone: "Providencia", lat: -33.4375, lng: -70.6353 },
+        "parque-bustamante": { name: "Parque Bustamante", detail: "Parque Bustamante · Providencia", zone: "Providencia", lat: -33.4430, lng: -70.6308 },
+        "terminal-alameda": { name: "Terminal Alameda", detail: "Terminal Alameda · Estación Central", zone: "Estación Central", lat: -33.4518, lng: -70.6693 },
+        "quinta-normal": { name: "Parque Quinta Normal", detail: "Parque Quinta Normal · Quinta Normal", zone: "Quinta Normal", lat: -33.4377, lng: -70.6816 },
+        "costanera-center": { name: "Costanera Center", detail: "Costanera Center · Providencia", zone: "Providencia", lat: -33.4172, lng: -70.6065 },
+        "plaza-nunoa": { name: "Plaza Ñuñoa", detail: "Plaza Ñuñoa · Ñuñoa", zone: "Ñuñoa", lat: -33.4548, lng: -70.6005 }
+      };
+      var demoStops = [
+        { name: "Metro Universidad de Chile", type: "Metro", lat: -33.4420, lng: -70.6501 },
+        { name: "Paradero PA330 · Alameda", type: "Paradero RED · prueba", lat: -33.4421, lng: -70.6560 },
+        { name: "Metro Santa Lucía", type: "Metro", lat: -33.4425, lng: -70.6451 },
+        { name: "Metro Baquedano", type: "Metro", lat: -33.4375, lng: -70.6353 },
+        { name: "Paradero PC123 · Providencia", type: "Paradero RED · prueba", lat: -33.4358, lng: -70.6292 },
+        { name: "Metro Bellas Artes", type: "Metro", lat: -33.4357, lng: -70.6438 },
+        { name: "Metro Cumming", type: "Metro", lat: -33.4364, lng: -70.6666 },
+        { name: "Paradero PQ44 · Quinta Normal", type: "Paradero RED · prueba", lat: -33.4365, lng: -70.6792 },
+        { name: "Metro Los Héroes", type: "Metro", lat: -33.4458, lng: -70.6550 }
+      ];
+      var demoVehicles = [
+        { name: "Estación Plaza de Armas", type: "ECOBI · 4 bicis / 2 scooters demo", lat: -33.4365, lng: -70.6484 },
+        { name: "Punto Lastarria", type: "3 bicicletas demo", lat: -33.4397, lng: -70.6419 },
+        { name: "Punto Baquedano", type: "5 scooters demo", lat: -33.4370, lng: -70.6329 },
+        { name: "Parque Bustamante", type: "2 bicicletas / 1 scooter demo", lat: -33.4442, lng: -70.6297 },
+        { name: "Costanera Center", type: "4 scooters demo", lat: -33.4177, lng: -70.6050 }
+      ];
+      var routeColors = { eco: "#21805c", fast: "#d98a36", transit: "#397db5" };
       var pageNames = {
         inicio: "Tu resumen", guia: "Guía de uso", rutas: "Planificar una ruta", impacto: "Mi impacto ambiental",
         recompensas: "Mis recompensas", historial: "Historial de viajes", alertas: "Alertas de movilidad"
       };
       var alertDefaults = [
-        { id: "a1", title: "Congestión alta en Av. Central", description: "Intensidad estimada: 68%. Considera transporte público o micro-movilidad.", type: "critical", time: "Hace 8 min" },
-        { id: "a2", title: "Obras cerca del Parque Norte", description: "Desvío sugerido en Calle del Río. Información de demostración.", type: "", time: "Hace 22 min" },
-        { id: "a3", title: "Punto de bicis disponible", description: "Estación Plaza Central · 4 bicis y 2 scooters (dato de ejemplo).", type: "", time: "Hace 35 min" }
+        { id: "a1", title: "Congestión simulada en Alameda", description: "Intensidad ficticia que cambia durante la demostración. Prueba una ruta en Metro o micromovilidad.", type: "critical", time: "Demo · actualizado hace 8 min" },
+        { id: "a2", title: "Obras de prueba cerca de Quinta Normal", description: "Incidente inventado para mostrar cómo se vería una alerta vial.", type: "", time: "Demo · hace 22 min" },
+        { id: "a3", title: "Bicis y scooters de prueba", description: "Punto ficticio en Plaza de Armas · unidades de ejemplo, no disponibles para arriendo.", type: "", time: "Demo · hace 35 min" }
       ];
       state = loadState();
 
@@ -494,6 +592,157 @@
         }).join("") : '<div class="empty">Registra viajes sostenibles para ver tu impacto.</div>';
       }
 
+      function getPlace(selectId) {
+        return demoPlaces[document.getElementById(selectId).value];
+      }
+
+      function haversineKm(from, to) {
+        var radians = Math.PI / 180;
+        var latDelta = (to.lat - from.lat) * radians;
+        var lngDelta = (to.lng - from.lng) * radians;
+        var a = Math.sin(latDelta / 2) * Math.sin(latDelta / 2) +
+          Math.cos(from.lat * radians) * Math.cos(to.lat * radians) *
+          Math.sin(lngDelta / 2) * Math.sin(lngDelta / 2);
+        return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function updateDistanceFromPlaces() {
+        var from = getPlace("origin");
+        var to = getPlace("destination");
+        if (!from || !to) return;
+        var distance = from === to ? 0.2 : haversineKm(from, to);
+        document.getElementById("distance").value = Math.max(0.2, distance).toFixed(1);
+      }
+
+      function makeMapIcon(kind, symbol) {
+        return L.divIcon({
+          className: "",
+          html: '<div class="map-point-icon ' + kind + '"><span>' + symbol + "</span></div>",
+          iconSize: [30, 30],
+          iconAnchor: [15, 28],
+          popupAnchor: [0, -25]
+        });
+      }
+
+      function popupMarkup(title, detail) {
+        return '<div class="map-popup-title">' + escapeHtml(title) + '</div><div class="map-popup-note">' + escapeHtml(detail) + "</div>";
+      }
+
+      function drawMapPins(mapId) {
+        if (!mapLayers[mapId]) return;
+        var layers = mapLayers[mapId];
+        layers.stops.clearLayers();
+        layers.vehicles.clearLayers();
+        demoStops.forEach(function (stop) {
+          L.marker([stop.lat, stop.lng], { icon: makeMapIcon("stop", "M") })
+            .bindPopup(popupMarkup(stop.name, stop.type + " · ubicación de prueba, no oficial"))
+            .addTo(layers.stops);
+        });
+        demoVehicles.forEach(function (vehicle) {
+          L.marker([vehicle.lat, vehicle.lng], { icon: makeMapIcon("vehicle", "↗") })
+            .bindPopup(popupMarkup(vehicle.name, vehicle.type + " · disponibilidad ficticia"))
+            .addTo(layers.vehicles);
+        });
+      }
+
+      function drawTrafficLayer(mapId) {
+        if (!mapLayers[mapId]) return;
+        var layers = mapLayers[mapId];
+        layers.traffic.clearLayers();
+        var busyColor = congestionLevel >= 60 ? "#d54e43" : "#df9a3e";
+        var corridor = [
+          [-33.4518, -70.6693], [-33.4475, -70.6605], [-33.4429, -70.6536],
+          [-33.4400, -70.6420], [-33.4375, -70.6353]
+        ];
+        L.polyline(corridor, { color: busyColor, weight: 7, opacity: 0.78, lineCap: "round" })
+          .bindPopup(popupMarkup("Corredor Alameda · tráfico demo", congestionLevel + "% de congestión simulada"))
+          .addTo(layers.traffic);
+        L.circleMarker([-33.4429, -70.6536], {
+          radius: 8, color: "#fff", weight: 3, fillColor: busyColor, fillOpacity: 1
+        }).bindTooltip("Alameda · " + congestionLevel + "% (dato ficticio)", { direction: "top" }).addTo(layers.traffic);
+        if (mapId === "routeMap" && !document.getElementById("showTraffic").checked) {
+          layers.traffic.remove();
+        }
+      }
+
+      function applyMapFilters() {
+        var map = mapInstances.routeMap;
+        var layers = mapLayers.routeMap;
+        if (!map || !layers) return;
+        [["stops", "showStops"], ["vehicles", "showVehicles"], ["traffic", "showTraffic"]].forEach(function (pair) {
+          var group = layers[pair[0]];
+          var enabled = document.getElementById(pair[1]).checked;
+          if (enabled && !map.hasLayer(group)) group.addTo(map);
+          if (!enabled && map.hasLayer(group)) map.removeLayer(group);
+        });
+      }
+
+      function initMaps() {
+        if (typeof L === "undefined") {
+          document.querySelectorAll(".leaflet-map").forEach(function (container) {
+            container.innerHTML = '<div class="empty">No se pudo cargar el mapa. Revisa tu conexión a internet e inténtalo de nuevo.</div>';
+          });
+          return;
+        }
+        ["homeMap", "routeMap"].forEach(function (mapId) {
+          var container = document.getElementById(mapId);
+          if (!container) return;
+          var map = L.map(container, { scrollWheelZoom: false, zoomControl: true }).setView([-33.441, -70.649], mapId === "homeMap" ? 12 : 12.8);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+          }).addTo(map);
+          mapInstances[mapId] = map;
+          mapLayers[mapId] = {
+            stops: L.layerGroup().addTo(map),
+            vehicles: L.layerGroup().addTo(map),
+            traffic: L.layerGroup().addTo(map),
+            route: L.layerGroup().addTo(map),
+            endpoints: L.layerGroup().addTo(map)
+          };
+          drawMapPins(mapId);
+          drawTrafficLayer(mapId);
+        });
+        applyMapFilters();
+      }
+
+      function drawDemoRoute(routeId) {
+        var map = mapInstances.routeMap;
+        var layers = mapLayers.routeMap;
+        var route = currentRoutes.filter(function (item) { return item.id === routeId; })[0];
+        var from = getPlace("origin");
+        var to = getPlace("destination");
+        if (!map || !layers || !route || !from || !to) return;
+        layers.route.clearLayers();
+        layers.endpoints.clearLayers();
+        var bend = routeId === "eco" ? 0.0022 : routeId === "fast" ? -0.0018 : 0.0007;
+        var middle = [(from.lat + to.lat) / 2 + bend, (from.lng + to.lng) / 2 - bend / 2];
+        var line = L.polyline([[from.lat, from.lng], middle, [to.lat, to.lng]], {
+          color: routeColors[routeId], weight: 6, opacity: 0.92, lineCap: "round", lineJoin: "round"
+        }).bindPopup(popupMarkup(route.name, "Trazado ilustrativo; no es una ruta de navegación real."))
+          .addTo(layers.route);
+        L.marker([from.lat, from.lng], { icon: makeMapIcon("start", "A") })
+          .bindPopup(popupMarkup("Origen · " + from.name, "Punto de prueba seleccionado"))
+          .addTo(layers.endpoints);
+        L.marker([to.lat, to.lng], { icon: makeMapIcon("end", "B") })
+          .bindPopup(popupMarkup("Destino · " + to.name, "Punto de prueba seleccionado"))
+          .addTo(layers.endpoints);
+        map.fitBounds(line.getBounds().pad(0.22), { maxZoom: 14, animate: true });
+      }
+
+      function updateDemoRealtime() {
+        congestionLevel = congestionLevels[congestionIndex];
+        congestionIndex = (congestionIndex + 1) % congestionLevels.length;
+        var now = new Intl.DateTimeFormat("es-CL", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
+        setText("trafficSummary", "Alameda · " + congestionLevel + "% congestión simulada");
+        setText("lastUpdated", "Actualizado " + now);
+        Object.keys(mapInstances).forEach(drawTrafficLayer);
+      }
+
+      function formatClp(value) {
+        return new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(value);
+      }
+
       function showToast(message) {
         var toast = document.getElementById("toast");
         toast.textContent = message;
@@ -509,44 +758,53 @@
         document.querySelectorAll(".nav-button").forEach(function (el) { el.classList.toggle("active", el.dataset.page === page); });
         setText("pageTitle", pageNames[page]);
         document.getElementById("sidebar").classList.remove("open");
+        if (mapInstances[page === "rutas" ? "routeMap" : "homeMap"]) {
+          setTimeout(function () { mapInstances[page === "rutas" ? "routeMap" : "homeMap"].invalidateSize(); }, 120);
+        }
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       function createRoutes() {
-        var origin = document.getElementById("origin").value.trim();
-        var destination = document.getElementById("destination").value.trim();
+        var originId = document.getElementById("origin").value;
+        var destinationId = document.getElementById("destination").value;
+        var origin = demoPlaces[originId];
+        var destination = demoPlaces[destinationId];
         var distance = Number(document.getElementById("distance").value);
-        if (!origin || !destination) { showToast("Escribe un origen y un destino para buscar."); return; }
+        if (!origin || !destination) { showToast("Selecciona un origen y un destino de prueba."); return; }
+        if (originId === destinationId) { showToast("El origen y el destino deben ser distintos."); return; }
         if (!Number.isFinite(distance) || distance <= 0 || distance > 100) { showToast("Ingresa una distancia entre 0,1 y 100 km."); return; }
-        var hour = new Date().getHours();
-        if (hour < 5 || hour >= 22) {
+        var now = new Date();
+        var localMinutes = now.getHours() * 60 + now.getMinutes();
+        if (localMinutes < 300 || localMinutes > 1350) {
           document.getElementById("serviceNotice").className = "notice warning";
-          document.getElementById("serviceNotice").textContent = "Fuera del horario operativo indicado en el informe (05:00–22:30). Puedes explorar la simulación, pero el servicio no estaría disponible.";
+          document.getElementById("serviceNotice").textContent = "Fuera del horario operativo del informe (05:00–22:30). Puedes explorar la simulación, pero el servicio real no estaría disponible.";
         } else {
           document.getElementById("serviceNotice").className = "notice";
-          document.getElementById("serviceNotice").textContent = "Rutas de demostración generadas localmente. Congestión ilustrativa: 68% en Av. Central. No son datos en vivo.";
+          document.getElementById("serviceNotice").textContent = "Simulación en vivo activa: el indicador cambia cada 20 segundos. Los datos no vienen de Waze, RED ni ECOBI.";
         }
         var d = distance;
         currentRoutes = [
-          { id: "eco", name: "Más sostenible", mode: "Bicicleta + metro + caminata", duration: Math.round(12 + d * 5), cost: (1.2 + d * 0.12), emissions: d * 0.035, description: "A pie 0,4 km · Bici ECOBI 1,6 km · Metro 2 paradas", points: Math.max(5, Math.round(d * 10)) },
-          { id: "fast", name: "Más rápida", mode: "Scooter + transporte público", duration: Math.round(9 + d * 4.1), cost: (1.8 + d * 0.2), emissions: d * 0.05, description: "Scooter 1,2 km · Metro 2 paradas · A pie 0,2 km", points: Math.max(4, Math.round(d * 8)) },
-          { id: "transit", name: "Más económica", mode: "Transporte público + caminata", duration: Math.round(16 + d * 5.2), cost: 0.85, emissions: d * 0.045, description: "Autobús 2 paradas · A pie " + Math.max(.5, d * .18).toFixed(1) + " km", points: Math.max(3, Math.round(d * 6)) }
+          { id: "eco", name: "Más sostenible", mode: "Bicicleta + Metro + caminata", duration: Math.round(10 + d * 5.1), cost: Math.round(950 + d * 135), emissions: d * 0.035, description: "Bici compartida demo · Metro L1/L5 · caminata final en " + destination.zone, points: Math.max(5, Math.round(d * 10)) },
+          { id: "fast", name: "Más rápida", mode: "Scooter + transporte público", duration: Math.round(8 + d * 4.1), cost: Math.round(1400 + d * 210), emissions: d * 0.05, description: "Scooter demo por Alameda / Providencia · conexión Metro", points: Math.max(4, Math.round(d * 8)) },
+          { id: "transit", name: "Más económica", mode: "Metro + bus RED de prueba", duration: Math.round(15 + d * 5.2), cost: 750, emissions: d * 0.045, description: "Metro y paradero ficticio · llegada a " + destination.name, points: Math.max(3, Math.round(d * 6)) }
         ];
-        var highTraffic = document.getElementById("routeResults");
-        highTraffic.innerHTML = '<div class="notice warning">⚠ Congestión simulada del 68% en una ruta en auto. Te recomendamos una alternativa sostenible.</div>' +
+        document.getElementById("routeResults").innerHTML =
+          '<div class="notice warning">⚠ Alameda: ' + congestionLevel + '% de congestión simulada. La cifra es ficticia; usa el mapa para explorar los puntos.</div>' +
           currentRoutes.map(function (route) {
             var co2 = Math.max(0, d * carKgPerKm - route.emissions);
-            return '<div class="route-option"><div><div class="route-name">' + escapeHtml(route.name) + ' <span class="badge">' + route.duration + ' min</span></div><div class="route-meta">' + escapeHtml(route.description) + '<br>' + escapeHtml(route.mode) + ' · evita aprox. ' + co2.toFixed(2) + ' kg CO₂</div></div><div class="route-actions"><div class="route-cost">€' + route.cost.toFixed(2) + '<br><small style="color:var(--muted);font-weight:400">estimado</small></div><button class="btn small" data-start-route="' + route.id + '">Elegir</button></div></div>';
+            return '<div class="route-option"><div><div class="route-name">' + escapeHtml(route.name) + ' <span class="badge">' + route.duration + ' min</span></div><div class="route-meta">' + escapeHtml(route.description) + '<br>' + escapeHtml(route.mode) + ' · evita aprox. ' + co2.toFixed(2) + ' kg CO₂</div></div><div class="route-actions"><div class="route-cost">' + formatClp(route.cost) + '<br><small style="color:var(--muted);font-weight:400">estimado</small></div><div style="display:flex;gap:6px"><button class="btn secondary small" data-view-route="' + route.id + '">Ver mapa</button><button class="btn small" data-start-route="' + route.id + '">Elegir</button></div></div></div>';
           }).join("");
-        showToast("Se encontraron 3 alternativas de demostración.");
+        drawDemoRoute("eco");
+        showToast("3 rutas de prueba listas para " + destination.name + ".");
       }
 
       function beginTrip(routeId) {
         var route = currentRoutes.filter(function (item) { return item.id === routeId; })[0];
         if (!route) return;
+        drawDemoRoute(routeId);
         pendingAction = { type: "trip", route: route };
         setText("modalTitle", "Finalizar viaje");
-        setText("modalDescription", "Registra el recorrido de " + route.mode + ". Los datos de GPS y proveedor son simulados para esta demo.");
+        setText("modalDescription", "Registra el recorrido de " + route.mode + " entre " + getPlace("origin").name + " y " + getPlace("destination").name + ". La validación GPS es simulada.");
         document.getElementById("validationField").style.display = "grid";
         document.getElementById("validationStatus").value = "valid";
         document.getElementById("modalConfirm").textContent = "Registrar viaje";
@@ -592,8 +850,8 @@
           var km = Number(document.getElementById("distance").value);
           state.trips.push({
             id: "trip-" + Date.now(), date: new Date().toISOString(),
-            origin: document.getElementById("origin").value.trim(),
-            destination: document.getElementById("destination").value.trim(),
+            origin: document.getElementById("origin").selectedOptions[0].textContent.trim(),
+            destination: document.getElementById("destination").selectedOptions[0].textContent.trim(),
             mode: route.mode, km: km, co2: valid ? Math.max(0, km * carKgPerKm - route.emissions) : 0,
             points: valid ? route.points : 0, valid: valid
           });
@@ -644,9 +902,16 @@
       document.querySelectorAll("[data-goto]").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.goto); }); });
       document.getElementById("menuToggle").addEventListener("click", function () { document.getElementById("sidebar").classList.toggle("open"); });
       document.getElementById("planRoute").addEventListener("click", createRoutes);
+      document.getElementById("origin").addEventListener("change", updateDistanceFromPlaces);
+      document.getElementById("destination").addEventListener("change", updateDistanceFromPlaces);
       document.getElementById("routeResults").addEventListener("click", function (event) {
-        var button = event.target.closest("[data-start-route]");
-        if (button) beginTrip(button.dataset.startRoute);
+        var viewButton = event.target.closest("[data-view-route]");
+        var startButton = event.target.closest("[data-start-route]");
+        if (viewButton) drawDemoRoute(viewButton.dataset.viewRoute);
+        if (startButton) beginTrip(startButton.dataset.startRoute);
+      });
+      ["showStops", "showVehicles", "showTraffic"].forEach(function (id) {
+        document.getElementById(id).addEventListener("change", applyMapFilters);
       });
       document.getElementById("redeemPass").addEventListener("click", function () { redeem("pass"); });
       document.getElementById("redeemRetail").addEventListener("click", function () { redeem("retail"); });
@@ -669,6 +934,10 @@
       document.getElementById("exportTrips").addEventListener("click", exportCsv);
       document.addEventListener("keydown", function (event) { if (event.key === "Escape") { pendingAction = null; document.getElementById("modalBackdrop").classList.remove("open"); document.getElementById("sidebar").classList.remove("open"); } });
       render();
+      updateDistanceFromPlaces();
+      initMaps();
+      updateDemoRealtime();
+      window.setInterval(updateDemoRealtime, 20000);
       navigate("inicio");
     }());
   </script>
