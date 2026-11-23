@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c27">
+  <title>We Móvil — movilidad sostenible</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172a26;
+      --muted: #71817c;
+      --green: #1c745b;
+      --green-dark: #102c27;
+      --mint: #e7f2eb;
+      --paper: #f5f7f3;
+      --line: #e5eae5;
+      --orange: #e89645;
+      --red: #c65a4e;
+      --white: #fff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0, 1fr); }
+    aside { background: var(--green-dark); color: #e8f3ed; padding: 28px 18px; display: flex; flex-direction: column; gap: 34px; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px; }
+    .brand-mark { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: #d7eddd; color: var(--green-dark); font-size: 22px; }
+    .brand strong { display: block; font-size: 17px; letter-spacing: -.4px; }
+    .brand small { display: block; color: #9db5aa; font-size: 11px; margin-top: 2px; }
+    .nav-label { color: #829c90; font-size: 10px; text-transform: uppercase; letter-spacing: 1.4px; padding: 0 11px; margin: 0 0 8px; }
+    nav { display: grid; gap: 5px; }
+    .nav-button { border: 0; color: #b6c8c0; background: transparent; padding: 12px 11px; text-align: left; border-radius: 10px; display: flex; gap: 12px; align-items: center; font-size: 13px; }
+    .nav-button:hover, .nav-button.active { color: white; background: #25483e; }
+    .nav-icon { width: 20px; text-align: center; font-size: 16px; }
+    .sidebar-note { margin-top: auto; padding: 15px; border-radius: 13px; background: #1a3b32; color: #bbd0c6; font-size: 11px; line-height: 1.55; }
+    .sidebar-note strong { color: white; display: block; margin-bottom: 5px; font-size: 12px; }
+    main { min-width: 0; }
+    header { min-height: 74px; padding: 17px clamp(18px, 4vw, 46px); display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.82); }
+    .eyebrow { color: var(--green); text-transform: uppercase; letter-spacing: 1.3px; font-size: 10px; font-weight: 750; }
+    header h1 { margin: 4px 0 0; font-size: 20px; letter-spacing: -.5px; }
+    .profile { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+    .avatar { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #dcece1; color: var(--green); font-weight: 750; }
+    .content { max-width: 1320px; margin: 0 auto; padding: 28px clamp(18px, 4vw, 46px) 48px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .welcome { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 22px; }
+    .welcome h2 { font-size: clamp(24px, 3vw, 32px); margin: 6px 0; letter-spacing: -1px; }
+    .welcome p { margin: 0; color: var(--muted); font-size: 13px; }
+    .date-pill, .badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; background: white; border: 1px solid var(--line); font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .grid { display: grid; gap: 16px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 18px; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 19px; box-shadow: 0 4px 16px rgba(24,52,43,.025); }
+    .stat-card { min-height: 126px; }
+    .stat-top { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 11px; }
+    .stat-icon { width: 30px; height: 30px; display: grid; place-items: center; background: var(--mint); border-radius: 10px; color: var(--green); }
+    .stat-value { font-size: 27px; font-weight: 760; margin: 13px 0 3px; letter-spacing: -.9px; }
+    .stat-hint { color: var(--muted); font-size: 10px; }
+    .dashboard-grid { grid-template-columns: minmax(0, 1.55fr) minmax(260px, .85fr); }
+    .card-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .card-heading h3 { margin: 0; font-size: 15px; letter-spacing: -.2px; }
+    .card-heading p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .text-link { border: 0; padding: 4px 0; background: none; color: var(--green); font-size: 11px; font-weight: 700; }
+    .map-illustration { height: 222px; position: relative; overflow: hidden; border-radius: 12px; background: #eaf0e8; }
+    .map-illustration svg { width: 100%; height: 100%; display: block; }
+    .map-tag { position: absolute; left: 13px; top: 12px; background: #fff; padding: 7px 10px; border-radius: 8px; box-shadow: 0 2px 9px #223a3020; font-size: 10px; color: var(--muted); }
+    .legend { display: flex; gap: 14px; padding-top: 13px; color: var(--muted); font-size: 10px; flex-wrap: wrap; }
+    .legend i { width: 8px; height: 8px; display: inline-block; border-radius: 50%; margin-right: 5px; background: var(--green); }
+    .legend span:nth-child(2) i { background: #68a6bd; }
+    .legend span:nth-child(3) i { background: var(--orange); }
+    .alert-item { display: flex; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
+    .alert-dot { flex: 0 0 8px; height: 8px; margin-top: 5px; background: var(--orange); border-radius: 50%; }
+    .alert-item.critical .alert-dot { background: var(--red); }
+    .alert-item h4 { font-size: 11px; margin: 0; }
+    .alert-item p { color: var(--muted); font-size: 10px; margin: 4px 0 0; line-height: 1.45; }
+    .alert-time { display: block; font-size: 9px; color: #9aa8a2; margin-top: 5px; }
+    .route-form { display: grid; grid-template-columns: 1fr 1fr 120px auto; gap: 11px; align-items: end; }
+    .field { display: grid; gap: 6px; min-width: 0; }
+    .field label { color: var(--muted); font-size: 10px; font-weight: 650; }
+    .field input, .field select { min-width: 0; width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 11px 12px; color: var(--ink); background: #fff; outline: none; font-size: 12px; }
+    .field input:focus, .field select:focus { border-color: #77aa91; box-shadow: 0 0 0 3px #1c745b16; }
+    .btn { border: 0; border-radius: 9px; padding: 11px 15px; background: var(--green); color: white; font-size: 11px; font-weight: 720; transition: .15s ease; }
+    .btn:hover { background: #155e49; transform: translateY(-1px); }
+    .btn.secondary { background: #edf4ef; color: var(--green); }
+    .btn.secondary:hover { background: #dfece3; }
+    .btn.small { padding: 8px 10px; }
+    .btn:disabled { background: #d8e0db; color: #7a8982; cursor: not-allowed; transform: none; }
+    .notice { margin-top: 14px; padding: 11px 13px; background: #f0f6f1; color: #547065; border-radius: 9px; font-size: 10px; line-height: 1.5; }
+    .notice.warning { background: #fff4e7; color: #885923; }
+    .route-list { display: grid; gap: 10px; margin-top: 16px; }
+    .route-option { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+    .route-option.selected { border-color: #68a78c; background: #f8fcf8; }
+    .route-name { font-size: 12px; font-weight: 750; }
+    .route-meta { color: var(--muted); font-size: 10px; margin-top: 5px; line-height: 1.55; }
+    .route-cost { color: var(--green); font-size: 11px; font-weight: 700; text-align: right; }
+    .route-actions { display: flex; align-items: center; gap: 7px; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .progress { height: 7px; background: #edf1ed; border-radius: 99px; overflow: hidden; margin: 11px 0 7px; }
+    .progress > span { display: block; height: 100%; width: 0; background: var(--green); border-radius: inherit; transition: width .25s ease; }
+    .progress-note { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+    .benefit { display: flex; justify-content: space-between; gap: 15px; align-items: center; padding: 13px 0; border-top: 1px solid var(--line); }
+    .benefit strong { display: block; font-size: 12px; }
+    .benefit small { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .coupon { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px; margin-top: 10px; border: 1px dashed #91b39d; border-radius: 11px; background: #f8fcf8; }
+    .coupon code { color: var(--green); font-weight: 800; letter-spacing: 1px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 610px; }
+    th { text-align: left; color: var(--muted); font-size: 10px; font-weight: 650; padding: 10px; border-bottom: 1px solid var(--line); }
+    td { padding: 12px 10px; border-bottom: 1px solid #eef1ed; font-size: 11px; }
+    .status { color: var(--green); background: #eaf4ed; padding: 5px 8px; border-radius: 20px; font-size: 9px; font-weight: 700; }
+    .status.rejected { color: #99574d; background: #faece9; }
+    .empty { color: var(--muted); padding: 25px 10px; text-align: center; font-size: 11px; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: none; place-items: center; padding: 20px; background: #102c2780; }
+    .modal-backdrop.open { display: grid; }
+    .modal { width: min(440px, 100%); background: white; border-radius: 16px; padding: 23px; box-shadow: 0 20px 70px #102c2740; }
+    .modal h3 { margin: 0 0 6px; font-size: 18px; }
+    .modal p { color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .modal-actions { display: flex; justify-content: end; gap: 8px; margin-top: 16px; }
+    .code-card { text-align: center; padding: 14px; margin: 16px 0; border-radius: 12px; background: #f2f7f3; }
+    .code-card code { display: block; color: var(--green); font-weight: 800; font-size: 20px; letter-spacing: 2px; margin-top: 8px; }
+    .toast { position: fixed; z-index: 30; right: 20px; bottom: 20px; max-width: min(370px, calc(100vw - 40px)); padding: 12px 16px; color: white; background: var(--green-dark); border-radius: 10px; box-shadow: 0 8px 30px #102c2730; font-size: 12px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .mobile-menu { display: none; }
+    @media (max-width: 970px) {
+      .shell { grid-template-columns: 205px minmax(0,1fr); }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .route-form { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .shell { display: block; }
+      aside { position: fixed; z-index: 10; inset: 0 auto 0 0; width: 248px; transform: translateX(-100%); transition: transform .2s ease; box-shadow: 15px 0 45px #102c2730; }
+      aside.open { transform: translateX(0); }
+      .mobile-menu { display: inline-grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 9px; background: white; }
+      header { justify-content: start; }
+      .profile { margin-left: auto; }
+      .profile span { display: none; }
+      .dashboard-grid, .split { grid-template-columns: 1fr; }
+      .welcome { align-items: start; flex-direction: column; }
+      .route-form { grid-template-columns: 1fr; }
+      .route-option { grid-template-columns: 1fr; }
+      .route-cost { text-align: left; }
+      .route-actions { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">↗</div>
+        <div><strong>we móvil</strong><small>Muévete mejor</small></div>
+      </div>
+      <div>
+        <p class="nav-label">Tu espacio</p>
+        <nav aria-label="Navegación principal">
+          <button class="nav-button active" data-page="inicio"><span class="nav-icon">⌂</span> Resumen</button>
+          <button class="nav-button" data-page="rutas"><span class="nav-icon">⌖</span> Planificar ruta</button>
+          <button class="nav-button" data-page="impacto"><span class="nav-icon">♧</span> Mi impacto</button>
+          <button class="nav-button" data-page="recompensas"><span class="nav-icon">✳</span> Recompensas</button>
+          <button class="nav-button" data-page="historial"><span class="nav-icon">◷</span> Historial</button>
+          <button class="nav-button" data-page="alertas"><span class="nav-icon">♧</span> Alertas</button>
+        </nav>
+      </div>
+      <div class="sidebar-note">
+        <strong>Prototipo interactivo</strong>
+        Rutas, tráfico y disponibilidad son datos de demostración. No hay conexión real con Waze, ECOBI ni el transporte municipal.
+      </div>
+    </aside>
+    <main>
+      <header>
+        <button id="menuToggle" class="mobile-menu" aria-label="Abrir menú">☰</button>
+        <div><div class="eyebrow">Movilidad urbana sostenible</div><h1 id="pageTitle">Tu resumen</h1></div>
+        <div class="profile"><div class="avatar">U</div><span>Usuario ciudadano</span></div>
+      </header>
+      <div class="content">
+        <section class="page active" id="page-inicio">
+          <div class="welcome">
+            <div><div class="eyebrow">Hola, viajero</div><h2>Muévete con propósito.</h2><p>Un viaje sostenible a la vez. Revisa tu progreso y planifica el siguiente.</p></div>
+            <div class="date-pill" id="todayLabel"></div>
+          </div>
+          <div class="grid stats">
+            <article class="card stat-card"><div class="stat-top"><span>CO₂ evitado</span><span class="stat-icon">♧</span></div><div class="stat-value" id="statCo2">0 <small style="font-size:13px">kg</small></div><div class="stat-hint">vs. viajar en auto particular</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Viajes sostenibles</span><span class="stat-icon">↗</span></div><div class="stat-value" id="statTrips">0</div><div class="stat-hint">viajes validados</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Días este mes</span><span class="stat-icon">▦</span></div><div class="stat-value" id="statDays">0</div><div class="stat-hint">con al menos un viaje</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Puntos disponibles</span><span class="stat-icon">✳</span></div><div class="stat-value" id="statPoints">0</div><div class="stat-hint">en tu billetera</div></article>
+          </div>
+          <div class="grid dashboard-grid">
+            <article class="card">
+              <div class="card-heading"><div><h3>Tu próxima ruta</h3><p>Una vista rápida de movilidad en la ciudad</p></div><button class="text-link" data-goto="rutas">Planificar →</button></div>
+              <div class="map-illustration">
+                <span class="map-tag">Mapa ilustrativo · Demo</span>
+                <svg viewBox="0 0 740 260" role="img" aria-label="Mapa esquemático con ruta multimodal">
+                  <rect width="740" height="260" fill="#eaf0e8"/>
+                  <path d="M-20 62 L760 199 M-20 186 L760 55 M115 -20 L215 280 M510 -20 L410 280 M670 -10 L585 280" stroke="#fff" stroke-width="24" fill="none"/>
+                  <path d="M-20 62 L760 199 M-20 186 L760 55 M115 -20 L215 280 M510 -20 L410 280 M670 -10 L585 280" stroke="#d7e1d8" stroke-width="2" fill="none"/>
+                  <path d="M105 186 C175 176 199 118 282 126 S400 169 449 112 S548 92 626 76" stroke="#1c745b" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 1" fill="none"/>
+                  <circle cx="105" cy="186" r="9" fill="#fff" stroke="#1c745b" stroke-width="5"/>
+                  <circle cx="282" cy="126" r="8" fill="#68a6bd" stroke="#fff" stroke-width="3"/>
+                  <circle cx="449" cy="112" r="8" fill="#e89645" stroke="#fff" stroke-width="3"/>
+                  <circle cx="626" cy="76" r="9" fill="#fff" stroke="#c65a4e" stroke-width="5"/>
+                  <g fill="#c6d9c7"><rect x="295" y="23" width="72" height="24" rx="8"/><rect x="523" y="188" width="92" height="25" rx="8"/><rect x="44" y="90" width="57" height="28" rx="8"/><rect x="335" y="212" width="54" height="18" rx="7"/></g>
+                  <text x="298" y="39" font-size="9" fill="#56705f">PARQUE</text><text x="536" y="204" font-size="9" fill="#56705f">BIBLIOTECA</text>
+                </svg>
+              </div>
+              <div class="legend"><span><i></i>A pie</span><span><i></i>Transporte público</span><span><i></i>Bici / scooter</span></div>
+            </article>
+            <article class="card">
+              <div class="card-heading"><div><h3>Alertas de movilidad</h3><p>Incidentes recientes en la ciudad</p></div><button class="text-link" data-goto="alertas">Ver todas</button></div>
+              <div id="homeAlerts"></div>
+            </article>
+          </div>
+          <div class="grid split" style="margin-top:16px">
+            <article class="card"><div class="card-heading"><div><h3>Meta de movilidad semanal</h3><p>Viaja de forma sostenible 5 días para desbloquear el beneficio mensual.</p></div><span class="badge">50% abono</span></div><div class="progress"><span id="weekProgress"></span></div><div class="progress-note"><span id="weekCount">0 de 5 días</span><span id="weekPercent">0%</span></div></article>
+            <article class="card"><div class="card-heading"><div><h3>¿Listo para salir?</h3><p>Compara rutas sostenibles hasta tu destino.</p></div></div><button class="btn" data-goto="rutas">Planificar un viaje →</button><div class="notice">Servicio de demostración: disponible todos los días, de 05:00 a 22:30.</div></article>
+          </div>
+        </section>
+
+        <section class="page" id="page-rutas">
+          <div class="welcome"><div><div class="eyebrow">Planificador multimodal</div><h2>¿A dónde vamos?</h2><p>Compara opciones a pie, en transporte público, bicicleta y scooter.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
+          <article class="card">
+            <div class="route-form">
+              <div class="field"><label for="origin">Origen</label><input id="origin" placeholder="Ej. Plaza Central" value="Plaza Central"></div>
+              <div class="field"><label for="destination">Destino</label><input id="destination" placeholder="Ej. Parque Norte"></div>
+              <div class="field"><label for="distance">Distancia estimada (km)</label><input id="distance" type="number" min="0.2" max="100" step="0.1" value="4.2"></div>
+              <button class="btn" id="planRoute">Buscar rutas</button>
+            </div>
+            <div class="notice" id="serviceNotice">La búsqueda usa ejemplos locales; no requiere GPS. Los datos no son tráfico ni disponibilidad en vivo.</div>
+            <div id="routeResults" class="route-list"></div>
+          </article>
+          <div class="grid dashboard-grid" style="margin-top:16px">
+            <article class="card"><div class="card-heading"><div><h3>Mapa de ruta</h3><p>Esquema ilustrativo de los tramos seleccionados</p></div></div><div class="map-illustration"><span class="map-tag">No representa navegación GPS</span><svg viewBox="0 0 740 260" aria-label="Mapa ilustrativo"><rect width="740" height="260" fill="#eaf0e8"/><path d="M-20 66 L760 200 M-20 190 L760 54 M120 -20 L215 280 M510 -20 L405 280 M670 -10 L590 280" stroke="#fff" stroke-width="25" fill="none"/><path d="M90 180 C190 175 190 116 300 130 S418 164 475 110 S560 101 650 70" stroke="#1c745b" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="90" cy="180" r="9" fill="#fff" stroke="#1c745b" stroke-width="5"/><circle cx="650" cy="70" r="9" fill="#fff" stroke="#c65a4e" stroke-width="5"/></svg></div></article>
+            <article class="card"><div class="card-heading"><div><h3>Antes de salir</h3><p>Información importante para tu viaje</p></div></div><div class="alert-item critical"><i class="alert-dot"></i><div><h4>Tráfico y cierres</h4><p>Consulta las alertas de demostración antes de salir; en una versión conectada se requerirían APIs externas.</p></div></div><div class="alert-item"><i class="alert-dot"></i><div><h4>Disponibilidad</h4><p>Bicis y scooters se muestran como lugares de ejemplo, no como unidades disponibles en vivo.</p></div></div></article>
+          </div>
+        </section>
+
+        <section class="page" id="page-impacto">
+          <div class="welcome"><div><div class="eyebrow">Tu huella positiva</div><h2>Pequeñas decisiones, gran impacto.</h2><p>Estimación comparada con realizar la misma distancia en un auto particular.</p></div></div>
+          <div class="grid stats">
+            <article class="card stat-card"><div class="stat-top"><span>CO₂ evitado total</span><span class="stat-icon">♧</span></div><div class="stat-value" id="impactCo2">0 kg</div><div class="stat-hint">estimación de tus viajes validados</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Distancia sostenible</span><span class="stat-icon">↗</span></div><div class="stat-value" id="impactKm">0 km</div><div class="stat-hint">en todos tus viajes</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Equivalencia</span><span class="stat-icon">♧</span></div><div class="stat-value" id="impactTrees">0</div><div class="stat-hint">árboles absorbiendo CO₂ por un día*</div></article>
+            <article class="card stat-card"><div class="stat-top"><span>Viajes validados</span><span class="stat-icon">✓</span></div><div class="stat-value" id="impactTrips">0</div><div class="stat-hint">viajes sostenibles registrados</div></article>
+          </div>
+          <article class="card"><div class="card-heading"><div><h3>Tu historial ambiental</h3><p>*Equivalencia didáctica: 1 árbol absorbe aproximadamente 21 kg de CO₂ al año. Factores de emisión simplificados para este prototipo.</p></div></div><div id="impactBars"></div></article>
+        </section>
+
+        <section class="page" id="page-recompensas">
+          <div class="welcome"><div><div class="eyebrow">Billetera sostenible</div><h2>Tu esfuerzo tiene recompensa.</h2><p>Revisa tus metas, beneficios y códigos de canje.</p></div><span class="badge">✳ <span id="walletPoints">0</span>&nbsp;puntos</span></div>
+          <div class="grid split">
+            <article class="card"><div class="card-heading"><div><h3>Abono mensual</h3><p>Completa viajes sostenibles en 5 días de la semana.</p></div><span class="badge">50% descuento</span></div><div class="progress"><span id="rewardWeekProgress"></span></div><div class="progress-note"><span id="rewardWeekCount">0 de 5 días</span><span id="rewardWeekPercent">0%</span></div><div class="benefit"><div><strong>Descuento en mensualidad</strong><small>Válido al cumplir la meta semanal de 5 días.</small></div><button class="btn small" id="redeemPass">Canjear</button></div><div id="passCoupon"></div></article>
+            <article class="card"><div class="card-heading"><div><h3>Tiendas deportivas</h3><p>Alcanza 20 días con viajes validados durante el mes.</p></div><span class="badge">30% descuento</span></div><div class="progress"><span id="rewardMonthProgress"></span></div><div class="progress-note"><span id="rewardMonthCount">0 de 20 días</span><span id="rewardMonthPercent">0%</span></div><div class="benefit"><div><strong>Adidas / New Balance</strong><small>Un cupón por mes, sujeto a las condiciones del comercio.</small></div><button class="btn small" id="redeemRetail">Canjear</button></div><div id="retailCoupon"></div></article>
+          </div>
+          <div class="notice" style="margin-top:16px">Los puntos y cupones son demostrativos y no tienen valor monetario. Un canje real requiere acuerdos con comercios y validación de identidad.</div>
+        </section>
+
+        <section class="page" id="page-historial">
+          <div class="welcome"><div><div class="eyebrow">Actividad</div><h2>Historial de viajes</h2><p>Los viajes con validación GPS coincidente suman CO₂ evitado y puntos.</p></div></div>
+          <article class="card"><div class="card-heading"><div><h3>Tus viajes registrados</h3><p>Este historial se guarda en este navegador.</p></div><button class="btn secondary small" id="exportTrips">Exportar CSV</button></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Origen → destino</th><th>Modo</th><th>Distancia</th><th>CO₂ evitado</th><th>Validación</th></tr></thead><tbody id="tripRows"></tbody></table></div></article>
+          <div class="notice">Antifraude de demostración: se compara un estado de validación simulado. No se lee el GPS ni se consulta a proveedores externos.</div>
+        </section>
+
+        <section class="page" id="page-alertas">
+          <div class="welcome"><div><div class="eyebrow">Avisos de movilidad</div><h2>Mantente al tanto.</h2><p>Alertas locales de demostración. Crea incidentes de ejemplo para probar la aplicación.</p></div><button id="addAlert" class="btn">+ Crear alerta</button></div>
+          <div class="grid dashboard-grid"><article class="card"><div class="card-heading"><div><h3>Alertas activas</h3><p>Congestión, obras y disponibilidad en tu ciudad</p></div></div><div id="allAlerts"></div></article><article class="card"><div class="card-heading"><div><h3>Preferencias</h3><p>Configura qué alertas aparecen en el prototipo.</p></div></div><label style="display:flex;gap:9px;align-items:center;font-size:11px;padding:8px 0"><input type="checkbox" id="alertsEnabled" checked> Mostrar avisos de movilidad</label><label style="display:flex;gap:9px;align-items:center;font-size:11px;padding:8px 0"><input type="checkbox" id="routeOnly"> Priorizar alertas vinculadas a mis rutas</label><div class="notice">Los avisos push, monitoreo en segundo plano e integración municipal no están disponibles en esta versión web local.</div></article></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal"><h3 id="modalTitle">Finalizar viaje</h3><p id="modalDescription">Confirma que terminaste el recorrido para registrarlo.</p>
+      <div class="field" id="validationField"><label for="validationStatus">Validación de viaje (simulada)</label><select id="validationStatus"><option value="valid">GPS coincide con el proveedor</option><option value="invalid">Inconsistencia de GPS</option></select></div>
+      <div class="modal-actions"><button class="btn secondary" id="modalCancel">Cancelar</button><button class="btn" id="modalConfirm">Confirmar</button></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    (function () {
+      "use strict";
+      var STORE_KEY = "we-movil-demo-v1";
+      var carKgPerKm = 0.192;
+      var state;
+      var currentRoutes = [];
+      var pendingAction = null;
+      var toastTimer;
+      var pageNames = {
+        inicio: "Tu resumen", rutas: "Planificar una ruta", impacto: "Mi impacto ambiental",
+        recompensas: "Mis recompensas", historial: "Historial de viajes", alertas: "Alertas de movilidad"
+      };
+      var alertDefaults = [
+        { id: "a1", title: "Congestión alta en Av. Central", description: "Intensidad estimada: 68%. Considera transporte público o micro-movilidad.", type: "critical", time: "Hace 8 min" },
+        { id: "a2", title: "Obras cerca del Parque Norte", description: "Desvío sugerido en Calle del Río. Información de demostración.", type: "", time: "Hace 22 min" },
+        { id: "a3", title: "Punto de bicis disponible", description: "Estación Plaza Central · 4 bicis y 2 scooters (dato de ejemplo).", type: "", time: "Hace 35 min" }
+      ];
+      state = loadState();
+
+      function loadState() {
+        try {
+          var saved = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+          return {
+            trips: Array.isArray(saved.trips) ? saved.trips : [],
+            alerts: Array.isArray(saved.alerts) ? saved.alerts : alertDefaults.slice(),
+            coupons: saved.coupons && typeof saved.coupons === "object" ? saved.coupons : {},
+            settings: saved.settings && typeof saved.settings === "object" ? saved.settings : { enabled: true, routeOnly: false }
+          };
+        } catch (error) {
+          console.error("No se pudieron leer los datos guardados.", error);
+          return { trips: [], alerts: alertDefaults.slice(), coupons: {}, settings: { enabled: true, routeOnly: false } };
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify(state));
+        } catch (error) {
+          showToast("No se pudieron guardar los cambios en este navegador.");
+          console.error("No se pudieron guardar los datos.", error);
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+        });
+      }
+
+      function localDateKey(date) {
+        var d = date || new Date();
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      }
+
+      function weekStart(date) {
+        var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        var weekday = (d.getDay() + 6) % 7;
+        d.setDate(d.getDate() - weekday);
+        return d;
+      }
+
+      function getPeriodDays(monthly) {
+        var now = new Date();
+        var start = monthly ? new Date(now.getFullYear(), now.getMonth(), 1) : weekStart(now);
+        var end = monthly ? new Date(now.getFullYear(), now.getMonth() + 1, 1) : new Date(start.getFullYear(), start.getMonth(), start.getDate() + 7);
+        var unique = {};
+        state.trips.forEach(function (trip) {
+          var date = new Date(trip.date);
+          if (trip.valid && date >= start && date < end) unique[localDateKey(date)] = true;
+        });
+        return Object.keys(unique).length;
+      }
+
+      function metrics() {
+        var validTrips = state.trips.filter(function (trip) { return trip.valid; });
+        return {
+          trips: validTrips.length,
+          co2: validTrips.reduce(function (sum, trip) { return sum + trip.co2; }, 0),
+          km: validTrips.reduce(function (sum, trip) { return sum + trip.km; }, 0),
+          points: validTrips.reduce(function (sum, trip) { return sum + trip.points; }, 0)
+        };
+      }
+
+      function render() {
+        var m = metrics();
+        var weekDays = getPeriodDays(false);
+        var monthDays = getPeriodDays(true);
+        setText("statCo2", m.co2.toFixed(1) + " kg");
+        setText("statTrips", String(m.trips));
+        setText("statDays", String(monthDays));
+        setText("statPoints", String(m.points));
+        setText("impactCo2", m.co2.toFixed(1) + " kg");
+        setText("impactKm", m.km.toFixed(1) + " km");
+        setText("impactTrees", (m.co2 / (21 / 365)).toFixed(1));
+        setText("impactTrips", String(m.trips));
+        setText("walletPoints", String(m.points));
+        setText("todayLabel", new Intl.DateTimeFormat("es", { weekday: "long", day: "numeric", month: "long" }).format(new Date()));
+        setProgress("weekProgress", "weekCount", "weekPercent", weekDays, 5);
+        setProgress("rewardWeekProgress", "rewardWeekCount", "rewardWeekPercent", weekDays, 5);
+        setProgress("rewardMonthProgress", "rewardMonthCount", "rewardMonthPercent", monthDays, 20);
+        renderAlerts();
+        renderTrips();
+        renderCoupons();
+        renderImpactBars();
+        document.getElementById("alertsEnabled").checked = state.settings.enabled;
+        document.getElementById("routeOnly").checked = state.settings.routeOnly;
+      }
+
+      function setText(id, text) { document.getElementById(id).textContent = text; }
+      function setProgress(barId, countId, percentId, count, goal) {
+        var percent = Math.min(100, Math.round(count / goal * 100));
+        document.getElementById(barId).style.width = percent + "%";
+        setText(countId, count + " de " + goal + " días");
+        setText(percentId, percent + "%");
+      }
+
+      function renderAlerts() {
+        var alerts = state.settings.enabled ? state.alerts : [];
+        document.getElementById("homeAlerts").innerHTML = alerts.slice(0, 3).map(alertMarkup).join("") || '<div class="empty">No tienes alertas activas.</div>';
+        document.getElementById("allAlerts").innerHTML = alerts.map(function (alert, index) {
+          return alertMarkup(alert) + (alert.custom ? '<button class="text-link" data-delete-alert="' + escapeHtml(alert.id) + '" style="margin:0 0 10px 18px">Eliminar alerta</button>' : "");
+        }).join("") || '<div class="empty">No tienes alertas activas.</div>';
+      }
+
+      function alertMarkup(alert) {
+        return '<div class="alert-item ' + escapeHtml(alert.type || "") + '"><i class="alert-dot"></i><div><h4>' + escapeHtml(alert.title) + '</h4><p>' + escapeHtml(alert.description) + '</p><span class="alert-time">' + escapeHtml(alert.time) + '</span></div></div>';
+      }
+
+      function renderTrips() {
+        var rows = state.trips.slice().sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
+        document.getElementById("tripRows").innerHTML = rows.length ? rows.map(function (trip) {
+          var date = new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(new Date(trip.date));
+          return "<tr><td>" + escapeHtml(date) + "</td><td>" + escapeHtml(trip.origin) + " → " + escapeHtml(trip.destination) + "</td><td>" + escapeHtml(trip.mode) + "</td><td>" + trip.km.toFixed(1) + " km</td><td>" + (trip.valid ? trip.co2.toFixed(2) + " kg" : "—") + '</td><td><span class="status ' + (trip.valid ? "" : "rejected") + '">' + (trip.valid ? "Validado · +" + trip.points + " pts" : "No validado") + "</span></td></tr>";
+        }).join("") : '<tr><td colspan="6" class="empty">Aún no tienes viajes. Planifica uno y regístralo aquí.</td></tr>';
+      }
+
+      function renderCoupons() {
+        ["pass", "retail"].forEach(function (kind) {
+          var coupon = state.coupons[kind];
+          var target = document.getElementById(kind === "pass" ? "passCoupon" : "retailCoupon");
+          if (!coupon) { target.innerHTML = ""; return; }
+          target.innerHTML = '<div class="coupon"><div><small>' + (kind === "pass" ? "Abono mensual · 50%" : "Adidas / New Balance · 30%") + '<br><code>' + escapeHtml(coupon.code) + "</code></small></div><button class=\"text-link\" data-coupon=\"" + kind + '">Ver código</button></div>';
+        });
+      }
+
+      function renderImpactBars() {
+        var byMode = {};
+        state.trips.filter(function (trip) { return trip.valid; }).forEach(function (trip) {
+          byMode[trip.mode] = (byMode[trip.mode] || 0) + trip.co2;
+        });
+        var entries = Object.keys(byMode).sort(function (a, b) { return byMode[b] - byMode[a]; });
+        document.getElementById("impactBars").innerHTML = entries.length ? entries.map(function (mode) {
+          var value = byMode[mode];
+          var width = Math.max(3, Math.round(value / metrics().co2 * 100));
+          return '<div style="margin:14px 0"><div class="progress-note"><span>' + escapeHtml(mode) + '</span><strong>' + value.toFixed(2) + ' kg</strong></div><div class="progress"><span style="width:' + width + '%"></span></div></div>';
+        }).join("") : '<div class="empty">Registra viajes sostenibles para ver tu impacto.</div>';
+      }
+
+      function showToast(message) {
+        var toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 3300);
+      }
+
+      function navigate(page) {
+        if (!pageNames[page]) return;
+        document.querySelectorAll(".page").forEach(function (el) { el.classList.remove("active"); });
+        document.getElementById("page-" + page).classList.add("active");
+        document.querySelectorAll(".nav-button").forEach(function (el) { el.classList.toggle("active", el.dataset.page === page); });
+        setText("pageTitle", pageNames[page]);
+        document.getElementById("sidebar").classList.remove("open");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function createRoutes() {
+        var origin = document.getElementById("origin").value.trim();
+        var destination = document.getElementById("destination").value.trim();
+        var distance = Number(document.getElementById("distance").value);
+        if (!origin || !destination) { showToast("Escribe un origen y un destino para buscar."); return; }
+        if (!Number.isFinite(distance) || distance <= 0 || distance > 100) { showToast("Ingresa una distancia entre 0,1 y 100 km."); return; }
+        var hour = new Date().getHours();
+        if (hour < 5 || hour >= 22) {
+          document.getElementById("serviceNotice").className = "notice warning";
+          document.getElementById("serviceNotice").textContent = "Fuera del horario operativo indicado en el informe (05:00–22:30). Puedes explorar la simulación, pero el servicio no estaría disponible.";
+        } else {
+          document.getElementById("serviceNotice").className = "notice";
+          document.getElementById("serviceNotice").textContent = "Rutas de demostración generadas localmente. Congestión ilustrativa: 68% en Av. Central. No son datos en vivo.";
+        }
+        var d = distance;
+        currentRoutes = [
+          { id: "eco", name: "Más sostenible", mode: "Bicicleta + metro + caminata", duration: Math.round(12 + d * 5), cost: (1.2 + d * 0.12), emissions: d * 0.035, description: "A pie 0,4 km · Bici ECOBI 1,6 km · Metro 2 paradas", points: Math.max(5, Math.round(d * 10)) },
+          { id: "fast", name: "Más rápida", mode: "Scooter + transporte público", duration: Math.round(9 + d * 4.1), cost: (1.8 + d * 0.2), emissions: d * 0.05, description: "Scooter 1,2 km · Metro 2 paradas · A pie 0,2 km", points: Math.max(4, Math.round(d * 8)) },
+          { id: "transit", name: "Más económica", mode: "Transporte público + caminata", duration: Math.round(16 + d * 5.2), cost: 0.85, emissions: d * 0.045, description: "Autobús 2 paradas · A pie " + Math.max(.5, d * .18).toFixed(1) + " km", points: Math.max(3, Math.round(d * 6)) }
+        ];
+        var highTraffic = document.getElementById("routeResults");
+        highTraffic.innerHTML = '<div class="notice warning">⚠ Congestión simulada del 68% en una ruta en auto. Te recomendamos una alternativa sostenible.</div>' +
+          currentRoutes.map(function (route) {
+            var co2 = Math.max(0, d * carKgPerKm - route.emissions);
+            return '<div class="route-option"><div><div class="route-name">' + escapeHtml(route.name) + ' <span class="badge">' + route.duration + ' min</span></div><div class="route-meta">' + escapeHtml(route.description) + '<br>' + escapeHtml(route.mode) + ' · evita aprox. ' + co2.toFixed(2) + ' kg CO₂</div></div><div class="route-actions"><div class="route-cost">€' + route.cost.toFixed(2) + '<br><small style="color:var(--muted);font-weight:400">estimado</small></div><button class="btn small" data-start-route="' + route.id + '">Elegir</button></div></div>';
+          }).join("");
+        showToast("Se encontraron 3 alternativas de demostración.");
+      }
+
+      function beginTrip(routeId) {
+        var route = currentRoutes.filter(function (item) { return item.id === routeId; })[0];
+        if (!route) return;
+        pendingAction = { type: "trip", route: route };
+        setText("modalTitle", "Finalizar viaje");
+        setText("modalDescription", "Registra el recorrido de " + route.mode + ". Los datos de GPS y proveedor son simulados para esta demo.");
+        document.getElementById("validationField").style.display = "grid";
+        document.getElementById("validationStatus").value = "valid";
+        document.getElementById("modalConfirm").textContent = "Registrar viaje";
+        document.getElementById("modalBackdrop").classList.add("open");
+      }
+
+      function redeem(kind) {
+        var eligible = kind === "pass" ? getPeriodDays(false) >= 5 : getPeriodDays(true) >= 20;
+        if (!eligible) {
+          var remaining = Math.max(0, (kind === "pass" ? 5 : 20) - getPeriodDays(kind === "retail"));
+          showToast("Aún no cumples la meta. Te faltan " + remaining + " día(s) con viajes validados.");
+          return;
+        }
+        if (state.coupons[kind]) { showCoupon(kind); return; }
+        pendingAction = { type: "coupon", kind: kind };
+        setText("modalTitle", "Confirmar canje");
+        setText("modalDescription", "Vas a generar un cupón de demostración. El beneficio real dependería de las condiciones del servicio y del comercio.");
+        document.getElementById("validationField").style.display = "none";
+        document.getElementById("modalConfirm").textContent = "Generar cupón";
+        document.getElementById("modalBackdrop").classList.add("open");
+      }
+
+      function showCoupon(kind) {
+        var coupon = state.coupons[kind];
+        if (!coupon) return;
+        setText("modalTitle", kind === "pass" ? "Cupón para abono mensual" : "Cupón para tiendas deportivas");
+        setText("modalDescription", kind === "pass" ? "Descuento demostrativo del 50% en mensualidad. No es canjeable en comercios reales." : "Descuento demostrativo del 30% en Adidas o New Balance. No es canjeable en comercios reales.");
+        document.getElementById("validationField").style.display = "none";
+        document.getElementById("modalConfirm").textContent = "Listo";
+        document.getElementById("modalConfirm").dataset.showCode = coupon.code;
+        document.getElementById("modalBackdrop").classList.add("open");
+        document.getElementById("modalDescription").innerHTML = escapeHtml(document.getElementById("modalDescription").textContent) + '<div class="code-card">Código de demostración<code>' + escapeHtml(coupon.code) + '</code></div>';
+      }
+
+      function confirmModal() {
+        if (!pendingAction) {
+          document.getElementById("modalBackdrop").classList.remove("open");
+          return;
+        }
+        if (pendingAction.type === "trip") {
+          var route = pendingAction.route;
+          var valid = document.getElementById("validationStatus").value === "valid";
+          var km = Number(document.getElementById("distance").value);
+          state.trips.push({
+            id: "trip-" + Date.now(), date: new Date().toISOString(),
+            origin: document.getElementById("origin").value.trim(),
+            destination: document.getElementById("destination").value.trim(),
+            mode: route.mode, km: km, co2: valid ? Math.max(0, km * carKgPerKm - route.emissions) : 0,
+            points: valid ? route.points : 0, valid: valid
+          });
+          saveState();
+          render();
+          document.getElementById("modalBackdrop").classList.remove("open");
+          showToast(valid ? "Viaje validado: se sumaron CO₂ evitado y " + route.points + " puntos." : "Viaje no validado: una inconsistencia simulada impidió sumar beneficios.");
+          navigate("historial");
+        } else if (pendingAction.type === "coupon") {
+          var kind = pendingAction.kind;
+          state.coupons[kind] = { code: "WEM-" + (kind === "pass" ? "50" : "30") + "-" + Math.random().toString(36).slice(2, 7).toUpperCase(), createdAt: new Date().toISOString() };
+          saveState();
+          render();
+          showToast("Cupón de demostración creado en tu billetera.");
+          showCoupon(kind);
+        }
+        pendingAction = null;
+      }
+
+      function addAlert() {
+        var title = window.prompt("Título de la alerta (por ejemplo: Corte de calle en Av. Central)");
+        if (title === null) return;
+        title = title.trim();
+        if (!title) { showToast("El título de la alerta no puede estar vacío."); return; }
+        var description = window.prompt("Descripción o desvío sugerido", "Incidente de demostración. Revisa una ruta alternativa.");
+        if (description === null) return;
+        state.alerts.unshift({ id: "a-" + Date.now(), title: title, description: description.trim() || "Sin detalles.", type: "critical", time: "Ahora", custom: true });
+        saveState();
+        render();
+        showToast("Alerta de demostración agregada.");
+      }
+
+      function exportCsv() {
+        var header = ["Fecha", "Origen", "Destino", "Modo", "Distancia km", "CO2 evitado kg", "Validado"];
+        var lines = state.trips.map(function (trip) {
+          return [trip.date, trip.origin, trip.destination, trip.mode, trip.km.toFixed(1), trip.co2.toFixed(2), trip.valid ? "si" : "no"].map(csvCell).join(",");
+        });
+        var blob = new Blob(["\uFEFF" + [header.join(",")].concat(lines).join("\r\n")], { type: "text/csv;charset=utf-8" });
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "we-movil-viajes.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+      function csvCell(value) { return '"' + String(value).replace(/"/g, '""') + '"'; }
+
+      document.querySelectorAll(".nav-button").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.page); }); });
+      document.querySelectorAll("[data-goto]").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.goto); }); });
+      document.getElementById("menuToggle").addEventListener("click", function () { document.getElementById("sidebar").classList.toggle("open"); });
+      document.getElementById("planRoute").addEventListener("click", createRoutes);
+      document.getElementById("routeResults").addEventListener("click", function (event) {
+        var button = event.target.closest("[data-start-route]");
+        if (button) beginTrip(button.dataset.startRoute);
+      });
+      document.getElementById("redeemPass").addEventListener("click", function () { redeem("pass"); });
+      document.getElementById("redeemRetail").addEventListener("click", function () { redeem("retail"); });
+      document.getElementById("allAlerts").addEventListener("click", function (event) {
+        var button = event.target.closest("[data-delete-alert]");
+        if (!button) return;
+        state.alerts = state.alerts.filter(function (alert) { return alert.id !== button.dataset.deleteAlert; });
+        saveState(); render();
+      });
+      document.body.addEventListener("click", function (event) {
+        var couponButton = event.target.closest("[data-coupon]");
+        if (couponButton) showCoupon(couponButton.dataset.coupon);
+      });
+      document.getElementById("addAlert").addEventListener("click", addAlert);
+      document.getElementById("alertsEnabled").addEventListener("change", function (event) { state.settings.enabled = event.target.checked; saveState(); render(); });
+      document.getElementById("routeOnly").addEventListener("change", function (event) { state.settings.routeOnly = event.target.checked; saveState(); });
+      document.getElementById("modalCancel").addEventListener("click", function () { pendingAction = null; document.getElementById("modalBackdrop").classList.remove("open"); document.getElementById("modalConfirm").dataset.showCode = ""; });
+      document.getElementById("modalConfirm").addEventListener("click", confirmModal);
+      document.getElementById("modalBackdrop").addEventListener("click", function (event) { if (event.target.id === "modalBackdrop") { pendingAction = null; event.currentTarget.classList.remove("open"); } });
+      document.getElementById("exportTrips").addEventListener("click", exportCsv);
+      document.addEventListener("keydown", function (event) { if (event.key === "Escape") { pendingAction = null; document.getElementById("modalBackdrop").classList.remove("open"); document.getElementById("sidebar").classList.remove("open"); } });
+      render();
+      navigate("inicio");
+    }());
+  </script>
+</body>
+</html>
