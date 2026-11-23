@@ -174,7 +174,7 @@
     .status { color: var(--green); background: #eaf4ed; padding: 5px 8px; border-radius: 20px; font-size: 9px; font-weight: 700; }
     .status.rejected { color: #99574d; background: #faece9; }
     .empty { color: var(--muted); padding: 25px 10px; text-align: center; font-size: 11px; }
-    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: none; place-items: center; padding: 20px; background: #102c2780; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 1000; display: none; place-items: center; padding: 20px; background: #102c2780; }
     .modal-backdrop.open { display: grid; }
     .modal { width: min(440px, 100%); background: white; border-radius: 16px; padding: 23px; box-shadow: 0 20px 70px #102c2740; }
     .modal h3 { margin: 0 0 6px; font-size: 18px; }
@@ -182,7 +182,7 @@
     .modal-actions { display: flex; justify-content: end; gap: 8px; margin-top: 16px; }
     .code-card { text-align: center; padding: 14px; margin: 16px 0; border-radius: 12px; background: #f2f7f3; }
     .code-card code { display: block; color: var(--green); font-weight: 800; font-size: 20px; letter-spacing: 2px; margin-top: 8px; }
-    .toast { position: fixed; z-index: 30; right: 20px; bottom: 20px; max-width: min(370px, calc(100vw - 40px)); padding: 12px 16px; color: white; background: var(--green-dark); border-radius: 10px; box-shadow: 0 8px 30px #102c2730; font-size: 12px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .2s ease; }
+    .toast { position: fixed; z-index: 1010; right: 20px; bottom: 20px; max-width: min(370px, calc(100vw - 40px)); padding: 12px 16px; color: white; background: var(--green-dark); border-radius: 10px; box-shadow: 0 8px 30px #102c2730; font-size: 12px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .2s ease; }
     .toast.show { opacity: 1; transform: translateY(0); }
     .mobile-menu { display: none; }
     @media (max-width: 970px) {
