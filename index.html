@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#102c27">
+  <meta name="description" content="Planifica viajes sostenibles, compara alternativas multimodales y descubre el impacto positivo de cada recorrido con We Móvil.">
   <title>We Móvil — movilidad sostenible</title>
   <style>
     :root {
@@ -21,7 +22,7 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--paper); color: var(--ink); }
+    body { margin: 0; background: radial-gradient(ellipse at 86% 0%, #e8f2e8 0, transparent 34%), var(--paper); color: var(--ink); }
     button, input, select { font: inherit; }
     button { cursor: pointer; }
     .shell { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0, 1fr); }
@@ -49,6 +50,32 @@
     .welcome { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 22px; }
     .welcome h2 { font-size: clamp(24px, 3vw, 32px); margin: 6px 0; letter-spacing: -1px; }
     .welcome p { margin: 0; color: var(--muted); font-size: 13px; }
+    .guide-hero { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-bottom: 18px; padding: 25px 28px; border-radius: 18px; color: white; background: linear-gradient(112deg, #102c27 0%, #1c604b 72%, #2d8060 100%); box-shadow: 0 12px 30px #153d3020; }
+    .guide-hero::after { content: ""; position: absolute; width: 220px; height: 220px; border: 1px solid #ffffff20; border-radius: 50%; right: 7%; top: -128px; box-shadow: 0 0 0 28px #ffffff08, 0 0 0 58px #ffffff06; }
+    .guide-hero-copy, .hero-actions, .hero-orbit { position: relative; z-index: 1; }
+    .guide-kicker { color: #b6dfc5; text-transform: uppercase; letter-spacing: 1.4px; font-size: 9px; font-weight: 800; }
+    .guide-hero h3 { margin: 8px 0 6px; max-width: 520px; font-size: clamp(20px, 2.5vw, 27px); letter-spacing: -.7px; }
+    .guide-hero p { margin: 0; max-width: 550px; color: #d3e6dc; font-size: 12px; line-height: 1.6; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn.light { color: var(--green-dark); background: #f0f8f2; }
+    .btn.light:hover { background: white; }
+    .btn.outline-light { color: white; border: 1px solid #ffffff5c; background: #ffffff10; }
+    .btn.outline-light:hover { background: #ffffff20; }
+    .guide-progress-mini { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #c4dfd0; font-size: 10px; }
+    .guide-progress-mini i { display: inline-block; width: 80px; height: 4px; border-radius: 10px; background: linear-gradient(90deg, #a9dec0 25%, #ffffff38 25%); }
+    .hero-orbit { flex: 0 0 105px; width: 105px; height: 105px; border: 1px solid #ffffff40; border-radius: 50%; display: grid; place-items: center; color: #d9f0e2; font-size: 41px; background: radial-gradient(circle, #ffffff1b 0, #ffffff06 68%); }
+    .guide-intro { max-width: 760px; margin: -5px 0 23px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .guide-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .guide-step { position: relative; min-height: 185px; padding: 20px; border: 1px solid var(--line); border-radius: 15px; background: linear-gradient(145deg, #fff, #fbfdfb); box-shadow: 0 7px 22px #193c2f08; }
+    .guide-step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex: 0 0 37px; width: 37px; height: 37px; display: grid; place-items: center; border-radius: 12px; color: var(--green); background: var(--mint); font-weight: 800; font-size: 14px; }
+    .guide-step h3 { margin: 0; font-size: 14px; }
+    .guide-step p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .guide-step .text-link { margin-top: 12px; }
+    .guide-callout { display: flex; gap: 12px; align-items: start; padding: 15px 17px; margin-top: 16px; border-radius: 12px; background: #fff4e7; color: #80592d; font-size: 11px; line-height: 1.65; }
+    .guide-callout strong { display: block; margin-bottom: 2px; color: #734a1e; }
+    .route-help { display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; padding: 12px; background: #f3f7f3; border: 1px solid #e8efe8; border-radius: 10px; color: #5e7469; font-size: 10px; line-height: 1.55; }
+    .route-help strong { color: var(--green-dark); }
     .date-pill, .badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border-radius: 999px; background: white; border: 1px solid var(--line); font-size: 11px; color: var(--muted); white-space: nowrap; }
     .grid { display: grid; gap: 16px; }
     .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 18px; }
@@ -127,6 +154,7 @@
       .shell { grid-template-columns: 205px minmax(0,1fr); }
       .stats { grid-template-columns: repeat(2, 1fr); }
       .route-form { grid-template-columns: 1fr 1fr; }
+      .hero-orbit { display: none; }
     }
     @media (max-width: 700px) {
       .shell { display: block; }
@@ -137,6 +165,8 @@
       .profile { margin-left: auto; }
       .profile span { display: none; }
       .dashboard-grid, .split { grid-template-columns: 1fr; }
+      .guide-grid { grid-template-columns: 1fr; }
+      .guide-hero { align-items: flex-start; flex-direction: column; padding: 21px; }
       .welcome { align-items: start; flex-direction: column; }
       .route-form { grid-template-columns: 1fr; }
       .route-option { grid-template-columns: 1fr; }
@@ -156,6 +186,7 @@
         <p class="nav-label">Tu espacio</p>
         <nav aria-label="Navegación principal">
           <button class="nav-button active" data-page="inicio"><span class="nav-icon">⌂</span> Resumen</button>
+          <button class="nav-button" data-page="guia"><span class="nav-icon">✦</span> Guía de uso</button>
           <button class="nav-button" data-page="rutas"><span class="nav-icon">⌖</span> Planificar ruta</button>
           <button class="nav-button" data-page="impacto"><span class="nav-icon">♧</span> Mi impacto</button>
           <button class="nav-button" data-page="recompensas"><span class="nav-icon">✳</span> Recompensas</button>
@@ -179,6 +210,19 @@
           <div class="welcome">
             <div><div class="eyebrow">Hola, viajero</div><h2>Muévete con propósito.</h2><p>Un viaje sostenible a la vez. Revisa tu progreso y planifica el siguiente.</p></div>
             <div class="date-pill" id="todayLabel"></div>
+          </div>
+          <div class="guide-hero">
+            <div class="guide-hero-copy">
+              <span class="guide-kicker">Tu movilidad, en buenas manos</span>
+              <h3>Elige una ruta mejor para ti y para la ciudad.</h3>
+              <p>Compara alternativas, registra tus viajes y convierte tus decisiones sostenibles en impacto visible.</p>
+              <div class="guide-progress-mini"><i></i><span>6 pasos sencillos para comenzar</span></div>
+              <div class="hero-actions" style="margin-top:15px">
+                <button class="btn light" data-goto="guia">Ver guía de uso</button>
+                <button class="btn outline-light" data-goto="rutas">Planificar un viaje</button>
+              </div>
+            </div>
+            <div class="hero-orbit" aria-hidden="true">↗</div>
           </div>
           <div class="grid stats">
             <article class="card stat-card"><div class="stat-top"><span>CO₂ evitado</span><span class="stat-icon">♧</span></div><div class="stat-value" id="statCo2">0 <small style="font-size:13px">kg</small></div><div class="stat-hint">vs. viajar en auto particular</div></article>
@@ -217,6 +261,21 @@
           </div>
         </section>
 
+        <section class="page" id="page-guia">
+          <div class="welcome"><div><div class="eyebrow">Guía rápida</div><h2>Tu primer viaje, paso a paso.</h2><p>En pocos minutos puedes explorar las funciones principales de We Móvil.</p></div><span class="badge">6 pasos · 2 minutos</span></div>
+          <p class="guide-intro">La idea es sencilla: indica hacia dónde vas, compara opciones sostenibles, completa un viaje y revisa cómo tus decisiones suman a tus metas. Puedes volver a esta guía cuando quieras.</p>
+          <div class="grid guide-grid">
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">01</span><h3>Indica tu origen y destino</h3></div><p>Abre <strong>Planificar ruta</strong>, escribe ambos lugares y una distancia aproximada en kilómetros. En esta versión no necesitas activar el GPS: puedes escribir todo manualmente.</p><button class="text-link" data-goto="rutas">Ir al planificador →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">02</span><h3>Compara las alternativas</h3></div><p>Pulsa <strong>Buscar rutas</strong>. Revisa duración, costo estimado y CO₂ evitado. “Más sostenible”, “Más rápida” y “Más económica” son opciones simuladas para que puedas explorar la experiencia.</p><button class="text-link" data-goto="rutas">Ver rutas →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">03</span><h3>Elige y registra el viaje</h3></div><p>Pulsa <strong>Elegir</strong> en una ruta. Para esta demostración, selecciona “GPS coincide con el proveedor” y confirma para registrar un viaje válido; elige “Inconsistencia” para probar la validación antifraude.</p><button class="text-link" data-goto="rutas">Probar un viaje →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">04</span><h3>Revisa tu impacto</h3></div><p>Un viaje validado actualiza automáticamente el historial, los puntos y el CO₂ estimado que evitaste frente a recorrer la misma distancia en auto. Los viajes no validados quedan registrados, pero no suman beneficios.</p><button class="text-link" data-goto="impacto">Ver mi impacto →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">05</span><h3>Alcanza tus metas y canjea</h3></div><p>Completa viajes validados en <strong>5 días de la semana</strong> para habilitar el beneficio del abono mensual, o en <strong>20 días del mes</strong> para el cupón de tiendas deportivas. El canje se habilita al cumplir cada meta.</p><button class="text-link" data-goto="recompensas">Abrir billetera →</button></article>
+            <article class="guide-step"><div class="guide-step-head"><span class="step-number">+</span><h3>Consulta alertas y tu historial</h3></div><p>En <strong>Alertas</strong> puedes revisar avisos de ejemplo, crear incidentes y ajustar preferencias. En <strong>Historial</strong> verás tus recorridos y podrás exportarlos a CSV.</p><button class="text-link" data-goto="alertas">Explorar alertas →</button></article>
+          </div>
+          <div class="guide-callout"><span aria-hidden="true">ⓘ</span><div><strong>Importante sobre esta demostración</strong>La navegación, el tráfico, la disponibilidad de vehículos y la validación GPS usan datos simulados. Tus datos se guardan únicamente en el almacenamiento local del navegador actual; no se sincronizan entre dispositivos ni se conectan con Waze, ECOBI, comercios o transporte municipal.</div></div>
+          <div style="display:flex;justify-content:center;margin-top:18px"><button class="btn" data-goto="rutas">Entendido, planificar viaje →</button></div>
+        </section>
+
         <section class="page" id="page-rutas">
           <div class="welcome"><div><div class="eyebrow">Planificador multimodal</div><h2>¿A dónde vamos?</h2><p>Compara opciones a pie, en transporte público, bicicleta y scooter.</p></div><span class="badge">Servicio 05:00–22:30</span></div>
           <article class="card">
@@ -227,6 +286,7 @@
               <button class="btn" id="planRoute">Buscar rutas</button>
             </div>
             <div class="notice" id="serviceNotice">La búsqueda usa ejemplos locales; no requiere GPS. Los datos no son tráfico ni disponibilidad en vivo.</div>
+            <div class="route-help"><span aria-hidden="true">ⓘ</span><span><strong>Cómo usarlo:</strong> escribe los lugares, ajusta la distancia y selecciona “Buscar rutas”. Después pulsa “Elegir” en tu alternativa preferida para registrar una prueba de viaje.</span></div>
             <div id="routeResults" class="route-list"></div>
           </article>
           <div class="grid dashboard-grid" style="margin-top:16px">
@@ -285,7 +345,7 @@
       var pendingAction = null;
       var toastTimer;
       var pageNames = {
-        inicio: "Tu resumen", rutas: "Planificar una ruta", impacto: "Mi impacto ambiental",
+        inicio: "Tu resumen", guia: "Guía de uso", rutas: "Planificar una ruta", impacto: "Mi impacto ambiental",
         recompensas: "Mis recompensas", historial: "Historial de viajes", alertas: "Alertas de movilidad"
       };
       var alertDefaults = [
